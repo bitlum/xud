@@ -2,8 +2,10 @@
 // file: xudrpc.proto
 
 /* tslint:disable */
+/* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
+import {handleClientStreamingCall} from "@grpc/grpc-js/build/src/server-call";
 import * as xudrpc_pb from "./xudrpc_pb";
 import * as annotations_pb from "./annotations_pb";
 
@@ -15,8 +17,8 @@ interface IXudInitService extends grpc.ServiceDefinition<grpc.UntypedServiceImpl
 
 interface IXudInitService_ICreateNode extends grpc.MethodDefinition<xudrpc_pb.CreateNodeRequest, xudrpc_pb.CreateNodeResponse> {
     path: string; // "/xudrpc.XudInit/CreateNode"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.CreateNodeRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.CreateNodeRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.CreateNodeResponse>;
@@ -24,8 +26,8 @@ interface IXudInitService_ICreateNode extends grpc.MethodDefinition<xudrpc_pb.Cr
 }
 interface IXudInitService_IRestoreNode extends grpc.MethodDefinition<xudrpc_pb.RestoreNodeRequest, xudrpc_pb.RestoreNodeResponse> {
     path: string; // "/xudrpc.XudInit/RestoreNode"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.RestoreNodeRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.RestoreNodeRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.RestoreNodeResponse>;
@@ -33,8 +35,8 @@ interface IXudInitService_IRestoreNode extends grpc.MethodDefinition<xudrpc_pb.R
 }
 interface IXudInitService_IUnlockNode extends grpc.MethodDefinition<xudrpc_pb.UnlockNodeRequest, xudrpc_pb.UnlockNodeResponse> {
     path: string; // "/xudrpc.XudInit/UnlockNode"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.UnlockNodeRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.UnlockNodeRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.UnlockNodeResponse>;
@@ -62,7 +64,7 @@ export interface IXudInitClient {
 }
 
 export class XudInitClient extends grpc.Client implements IXudInitClient {
-    constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
+    constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
     public createNode(request: xudrpc_pb.CreateNodeRequest, callback: (error: grpc.ServiceError | null, response: xudrpc_pb.CreateNodeResponse) => void): grpc.ClientUnaryCall;
     public createNode(request: xudrpc_pb.CreateNodeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: xudrpc_pb.CreateNodeResponse) => void): grpc.ClientUnaryCall;
     public createNode(request: xudrpc_pb.CreateNodeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: xudrpc_pb.CreateNodeResponse) => void): grpc.ClientUnaryCall;
@@ -109,8 +111,8 @@ interface IXudService extends grpc.ServiceDefinition<grpc.UntypedServiceImplemen
 
 interface IXudService_IAddCurrency extends grpc.MethodDefinition<xudrpc_pb.Currency, xudrpc_pb.AddCurrencyResponse> {
     path: string; // "/xudrpc.Xud/AddCurrency"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.Currency>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.Currency>;
     responseSerialize: grpc.serialize<xudrpc_pb.AddCurrencyResponse>;
@@ -118,8 +120,8 @@ interface IXudService_IAddCurrency extends grpc.MethodDefinition<xudrpc_pb.Curre
 }
 interface IXudService_IAddPair extends grpc.MethodDefinition<xudrpc_pb.AddPairRequest, xudrpc_pb.AddPairResponse> {
     path: string; // "/xudrpc.Xud/AddPair"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.AddPairRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.AddPairRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.AddPairResponse>;
@@ -127,8 +129,8 @@ interface IXudService_IAddPair extends grpc.MethodDefinition<xudrpc_pb.AddPairRe
 }
 interface IXudService_IBan extends grpc.MethodDefinition<xudrpc_pb.BanRequest, xudrpc_pb.BanResponse> {
     path: string; // "/xudrpc.Xud/Ban"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.BanRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.BanRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.BanResponse>;
@@ -136,8 +138,8 @@ interface IXudService_IBan extends grpc.MethodDefinition<xudrpc_pb.BanRequest, x
 }
 interface IXudService_ICloseChannel extends grpc.MethodDefinition<xudrpc_pb.CloseChannelRequest, xudrpc_pb.CloseChannelResponse> {
     path: string; // "/xudrpc.Xud/CloseChannel"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.CloseChannelRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.CloseChannelRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.CloseChannelResponse>;
@@ -145,8 +147,8 @@ interface IXudService_ICloseChannel extends grpc.MethodDefinition<xudrpc_pb.Clos
 }
 interface IXudService_IConnect extends grpc.MethodDefinition<xudrpc_pb.ConnectRequest, xudrpc_pb.ConnectResponse> {
     path: string; // "/xudrpc.Xud/Connect"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.ConnectRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.ConnectRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.ConnectResponse>;
@@ -154,8 +156,8 @@ interface IXudService_IConnect extends grpc.MethodDefinition<xudrpc_pb.ConnectRe
 }
 interface IXudService_IWalletDeposit extends grpc.MethodDefinition<xudrpc_pb.DepositRequest, xudrpc_pb.DepositResponse> {
     path: string; // "/xudrpc.Xud/WalletDeposit"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.DepositRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.DepositRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.DepositResponse>;
@@ -163,8 +165,8 @@ interface IXudService_IWalletDeposit extends grpc.MethodDefinition<xudrpc_pb.Dep
 }
 interface IXudService_IDiscoverNodes extends grpc.MethodDefinition<xudrpc_pb.DiscoverNodesRequest, xudrpc_pb.DiscoverNodesResponse> {
     path: string; // "/xudrpc.Xud/DiscoverNodes"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.DiscoverNodesRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.DiscoverNodesRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.DiscoverNodesResponse>;
@@ -172,8 +174,8 @@ interface IXudService_IDiscoverNodes extends grpc.MethodDefinition<xudrpc_pb.Dis
 }
 interface IXudService_IGetBalance extends grpc.MethodDefinition<xudrpc_pb.GetBalanceRequest, xudrpc_pb.GetBalanceResponse> {
     path: string; // "/xudrpc.Xud/GetBalance"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.GetBalanceRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.GetBalanceRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.GetBalanceResponse>;
@@ -181,8 +183,8 @@ interface IXudService_IGetBalance extends grpc.MethodDefinition<xudrpc_pb.GetBal
 }
 interface IXudService_IGetInfo extends grpc.MethodDefinition<xudrpc_pb.GetInfoRequest, xudrpc_pb.GetInfoResponse> {
     path: string; // "/xudrpc.Xud/GetInfo"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.GetInfoRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.GetInfoRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.GetInfoResponse>;
@@ -190,8 +192,8 @@ interface IXudService_IGetInfo extends grpc.MethodDefinition<xudrpc_pb.GetInfoRe
 }
 interface IXudService_IGetNodeInfo extends grpc.MethodDefinition<xudrpc_pb.GetNodeInfoRequest, xudrpc_pb.GetNodeInfoResponse> {
     path: string; // "/xudrpc.Xud/GetNodeInfo"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.GetNodeInfoRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.GetNodeInfoRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.GetNodeInfoResponse>;
@@ -199,8 +201,8 @@ interface IXudService_IGetNodeInfo extends grpc.MethodDefinition<xudrpc_pb.GetNo
 }
 interface IXudService_IListOrders extends grpc.MethodDefinition<xudrpc_pb.ListOrdersRequest, xudrpc_pb.ListOrdersResponse> {
     path: string; // "/xudrpc.Xud/ListOrders"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.ListOrdersRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.ListOrdersRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.ListOrdersResponse>;
@@ -208,8 +210,8 @@ interface IXudService_IListOrders extends grpc.MethodDefinition<xudrpc_pb.ListOr
 }
 interface IXudService_IListCurrencies extends grpc.MethodDefinition<xudrpc_pb.ListCurrenciesRequest, xudrpc_pb.ListCurrenciesResponse> {
     path: string; // "/xudrpc.Xud/ListCurrencies"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.ListCurrenciesRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.ListCurrenciesRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.ListCurrenciesResponse>;
@@ -217,8 +219,8 @@ interface IXudService_IListCurrencies extends grpc.MethodDefinition<xudrpc_pb.Li
 }
 interface IXudService_IListPairs extends grpc.MethodDefinition<xudrpc_pb.ListPairsRequest, xudrpc_pb.ListPairsResponse> {
     path: string; // "/xudrpc.Xud/ListPairs"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.ListPairsRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.ListPairsRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.ListPairsResponse>;
@@ -226,8 +228,8 @@ interface IXudService_IListPairs extends grpc.MethodDefinition<xudrpc_pb.ListPai
 }
 interface IXudService_IListPeers extends grpc.MethodDefinition<xudrpc_pb.ListPeersRequest, xudrpc_pb.ListPeersResponse> {
     path: string; // "/xudrpc.Xud/ListPeers"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.ListPeersRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.ListPeersRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.ListPeersResponse>;
@@ -235,8 +237,8 @@ interface IXudService_IListPeers extends grpc.MethodDefinition<xudrpc_pb.ListPee
 }
 interface IXudService_IOpenChannel extends grpc.MethodDefinition<xudrpc_pb.OpenChannelRequest, xudrpc_pb.OpenChannelResponse> {
     path: string; // "/xudrpc.Xud/OpenChannel"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.OpenChannelRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.OpenChannelRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.OpenChannelResponse>;
@@ -244,8 +246,8 @@ interface IXudService_IOpenChannel extends grpc.MethodDefinition<xudrpc_pb.OpenC
 }
 interface IXudService_IPlaceOrder extends grpc.MethodDefinition<xudrpc_pb.PlaceOrderRequest, xudrpc_pb.PlaceOrderEvent> {
     path: string; // "/xudrpc.Xud/PlaceOrder"
-    requestStream: boolean; // false
-    responseStream: boolean; // true
+    requestStream: false;
+    responseStream: true;
     requestSerialize: grpc.serialize<xudrpc_pb.PlaceOrderRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.PlaceOrderRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.PlaceOrderEvent>;
@@ -253,8 +255,8 @@ interface IXudService_IPlaceOrder extends grpc.MethodDefinition<xudrpc_pb.PlaceO
 }
 interface IXudService_IPlaceOrderSync extends grpc.MethodDefinition<xudrpc_pb.PlaceOrderRequest, xudrpc_pb.PlaceOrderResponse> {
     path: string; // "/xudrpc.Xud/PlaceOrderSync"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.PlaceOrderRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.PlaceOrderRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.PlaceOrderResponse>;
@@ -262,8 +264,8 @@ interface IXudService_IPlaceOrderSync extends grpc.MethodDefinition<xudrpc_pb.Pl
 }
 interface IXudService_IExecuteSwap extends grpc.MethodDefinition<xudrpc_pb.ExecuteSwapRequest, xudrpc_pb.SwapSuccess> {
     path: string; // "/xudrpc.Xud/ExecuteSwap"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.ExecuteSwapRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.ExecuteSwapRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.SwapSuccess>;
@@ -271,8 +273,8 @@ interface IXudService_IExecuteSwap extends grpc.MethodDefinition<xudrpc_pb.Execu
 }
 interface IXudService_IRemoveCurrency extends grpc.MethodDefinition<xudrpc_pb.RemoveCurrencyRequest, xudrpc_pb.RemoveCurrencyResponse> {
     path: string; // "/xudrpc.Xud/RemoveCurrency"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.RemoveCurrencyRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.RemoveCurrencyRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.RemoveCurrencyResponse>;
@@ -280,8 +282,8 @@ interface IXudService_IRemoveCurrency extends grpc.MethodDefinition<xudrpc_pb.Re
 }
 interface IXudService_IRemoveOrder extends grpc.MethodDefinition<xudrpc_pb.RemoveOrderRequest, xudrpc_pb.RemoveOrderResponse> {
     path: string; // "/xudrpc.Xud/RemoveOrder"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.RemoveOrderRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.RemoveOrderRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.RemoveOrderResponse>;
@@ -289,8 +291,8 @@ interface IXudService_IRemoveOrder extends grpc.MethodDefinition<xudrpc_pb.Remov
 }
 interface IXudService_IRemovePair extends grpc.MethodDefinition<xudrpc_pb.RemovePairRequest, xudrpc_pb.RemovePairResponse> {
     path: string; // "/xudrpc.Xud/RemovePair"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.RemovePairRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.RemovePairRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.RemovePairResponse>;
@@ -298,8 +300,8 @@ interface IXudService_IRemovePair extends grpc.MethodDefinition<xudrpc_pb.Remove
 }
 interface IXudService_IShutdown extends grpc.MethodDefinition<xudrpc_pb.ShutdownRequest, xudrpc_pb.ShutdownResponse> {
     path: string; // "/xudrpc.Xud/Shutdown"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.ShutdownRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.ShutdownRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.ShutdownResponse>;
@@ -307,8 +309,8 @@ interface IXudService_IShutdown extends grpc.MethodDefinition<xudrpc_pb.Shutdown
 }
 interface IXudService_ISubscribeOrders extends grpc.MethodDefinition<xudrpc_pb.SubscribeOrdersRequest, xudrpc_pb.OrderUpdate> {
     path: string; // "/xudrpc.Xud/SubscribeOrders"
-    requestStream: boolean; // false
-    responseStream: boolean; // true
+    requestStream: false;
+    responseStream: true;
     requestSerialize: grpc.serialize<xudrpc_pb.SubscribeOrdersRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.SubscribeOrdersRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.OrderUpdate>;
@@ -316,8 +318,8 @@ interface IXudService_ISubscribeOrders extends grpc.MethodDefinition<xudrpc_pb.S
 }
 interface IXudService_ISubscribeSwapFailures extends grpc.MethodDefinition<xudrpc_pb.SubscribeSwapsRequest, xudrpc_pb.SwapFailure> {
     path: string; // "/xudrpc.Xud/SubscribeSwapFailures"
-    requestStream: boolean; // false
-    responseStream: boolean; // true
+    requestStream: false;
+    responseStream: true;
     requestSerialize: grpc.serialize<xudrpc_pb.SubscribeSwapsRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.SubscribeSwapsRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.SwapFailure>;
@@ -325,8 +327,8 @@ interface IXudService_ISubscribeSwapFailures extends grpc.MethodDefinition<xudrp
 }
 interface IXudService_ISubscribeSwaps extends grpc.MethodDefinition<xudrpc_pb.SubscribeSwapsRequest, xudrpc_pb.SwapSuccess> {
     path: string; // "/xudrpc.Xud/SubscribeSwaps"
-    requestStream: boolean; // false
-    responseStream: boolean; // true
+    requestStream: false;
+    responseStream: true;
     requestSerialize: grpc.serialize<xudrpc_pb.SubscribeSwapsRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.SubscribeSwapsRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.SwapSuccess>;
@@ -334,8 +336,8 @@ interface IXudService_ISubscribeSwaps extends grpc.MethodDefinition<xudrpc_pb.Su
 }
 interface IXudService_ISubscribeSwapsAccepted extends grpc.MethodDefinition<xudrpc_pb.SubscribeSwapsAcceptedRequest, xudrpc_pb.SwapAccepted> {
     path: string; // "/xudrpc.Xud/SubscribeSwapsAccepted"
-    requestStream: boolean; // false
-    responseStream: boolean; // true
+    requestStream: false;
+    responseStream: true;
     requestSerialize: grpc.serialize<xudrpc_pb.SubscribeSwapsAcceptedRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.SubscribeSwapsAcceptedRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.SwapAccepted>;
@@ -343,8 +345,8 @@ interface IXudService_ISubscribeSwapsAccepted extends grpc.MethodDefinition<xudr
 }
 interface IXudService_ITradeHistory extends grpc.MethodDefinition<xudrpc_pb.TradeHistoryRequest, xudrpc_pb.TradeHistoryResponse> {
     path: string; // "/xudrpc.Xud/TradeHistory"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.TradeHistoryRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.TradeHistoryRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.TradeHistoryResponse>;
@@ -352,8 +354,8 @@ interface IXudService_ITradeHistory extends grpc.MethodDefinition<xudrpc_pb.Trad
 }
 interface IXudService_ITradingLimits extends grpc.MethodDefinition<xudrpc_pb.TradingLimitsRequest, xudrpc_pb.TradingLimitsResponse> {
     path: string; // "/xudrpc.Xud/TradingLimits"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.TradingLimitsRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.TradingLimitsRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.TradingLimitsResponse>;
@@ -361,8 +363,8 @@ interface IXudService_ITradingLimits extends grpc.MethodDefinition<xudrpc_pb.Tra
 }
 interface IXudService_IUnban extends grpc.MethodDefinition<xudrpc_pb.UnbanRequest, xudrpc_pb.UnbanResponse> {
     path: string; // "/xudrpc.Xud/Unban"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.UnbanRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.UnbanRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.UnbanResponse>;
@@ -370,8 +372,8 @@ interface IXudService_IUnban extends grpc.MethodDefinition<xudrpc_pb.UnbanReques
 }
 interface IXudService_IWalletWithdraw extends grpc.MethodDefinition<xudrpc_pb.WithdrawRequest, xudrpc_pb.WithdrawResponse> {
     path: string; // "/xudrpc.Xud/WalletWithdraw"
-    requestStream: boolean; // false
-    responseStream: boolean; // false
+    requestStream: false;
+    responseStream: false;
     requestSerialize: grpc.serialize<xudrpc_pb.WithdrawRequest>;
     requestDeserialize: grpc.deserialize<xudrpc_pb.WithdrawRequest>;
     responseSerialize: grpc.serialize<xudrpc_pb.WithdrawResponse>;
@@ -502,7 +504,7 @@ export interface IXudClient {
 }
 
 export class XudClient extends grpc.Client implements IXudClient {
-    constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
+    constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
     public addCurrency(request: xudrpc_pb.Currency, callback: (error: grpc.ServiceError | null, response: xudrpc_pb.AddCurrencyResponse) => void): grpc.ClientUnaryCall;
     public addCurrency(request: xudrpc_pb.Currency, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: xudrpc_pb.AddCurrencyResponse) => void): grpc.ClientUnaryCall;
     public addCurrency(request: xudrpc_pb.Currency, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: xudrpc_pb.AddCurrencyResponse) => void): grpc.ClientUnaryCall;

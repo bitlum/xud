@@ -1,17 +1,7 @@
-import grpc from 'grpc';
+import { ServiceError } from '@grpc/grpc-js';
 import http from 'http';
 import { defer, empty, from, Observable, of, throwError } from 'rxjs';
-import {
-  catchError,
-  concat,
-  concatAll,
-  delay,
-  mapTo,
-  mergeMap,
-  retryWhen,
-  share,
-  take,
-} from 'rxjs/operators';
+import { catchError, concat, concatAll, delay, mapTo, mergeMap, retryWhen, share, take } from 'rxjs/operators';
 import { loadXudClient } from '../cli/command';
 import { XudClient } from '../proto/xudrpc_grpc_pb';
 import {
@@ -40,7 +30,7 @@ type ChannelConfig = {
 };
 
 const processResponse = (resolve: Function, reject: Function) => {
-  return (error: grpc.ServiceError | null, response: any) => {
+  return (error: ServiceError | null, response: any) => {
     if (error) {
       reject(error);
     } else {

@@ -2,6 +2,7 @@
 // file: xudrpc.proto
 
 /* tslint:disable */
+/* eslint-disable */
 
 import * as jspb from "google-protobuf";
 import * as annotations_pb from "./annotations_pb";
@@ -25,10 +26,10 @@ export namespace AddCurrencyResponse {
 
 export class AddPairRequest extends jspb.Message { 
     getBaseCurrency(): string;
-    setBaseCurrency(value: string): void;
+    setBaseCurrency(value: string): AddPairRequest;
 
     getQuoteCurrency(): string;
-    setQuoteCurrency(value: string): void;
+    setQuoteCurrency(value: string): AddPairRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -67,22 +68,22 @@ export namespace AddPairResponse {
 
 export class Balance extends jspb.Message { 
     getTotalBalance(): number;
-    setTotalBalance(value: number): void;
+    setTotalBalance(value: number): Balance;
 
     getChannelBalance(): number;
-    setChannelBalance(value: number): void;
+    setChannelBalance(value: number): Balance;
 
     getPendingChannelBalance(): number;
-    setPendingChannelBalance(value: number): void;
+    setPendingChannelBalance(value: number): Balance;
 
     getInactiveChannelBalance(): number;
-    setInactiveChannelBalance(value: number): void;
+    setInactiveChannelBalance(value: number): Balance;
 
     getWalletBalance(): number;
-    setWalletBalance(value: number): void;
+    setWalletBalance(value: number): Balance;
 
     getUnconfirmedWalletBalance(): number;
-    setUnconfirmedWalletBalance(value: number): void;
+    setUnconfirmedWalletBalance(value: number): Balance;
 
 
     serializeBinary(): Uint8Array;
@@ -108,7 +109,7 @@ export namespace Balance {
 
 export class BanRequest extends jspb.Message { 
     getNodeIdentifier(): string;
-    setNodeIdentifier(value: string): void;
+    setNodeIdentifier(value: string): BanRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -146,10 +147,10 @@ export namespace BanResponse {
 
 export class Chain extends jspb.Message { 
     getChain(): string;
-    setChain(value: string): void;
+    setChain(value: string): Chain;
 
     getNetwork(): string;
-    setNetwork(value: string): void;
+    setNetwork(value: string): Chain;
 
 
     serializeBinary(): Uint8Array;
@@ -171,16 +172,16 @@ export namespace Chain {
 
 export class Channels extends jspb.Message { 
     getActive(): number;
-    setActive(value: number): void;
+    setActive(value: number): Channels;
 
     getInactive(): number;
-    setInactive(value: number): void;
+    setInactive(value: number): Channels;
 
     getPending(): number;
-    setPending(value: number): void;
+    setPending(value: number): Channels;
 
     getClosed(): number;
-    setClosed(value: number): void;
+    setClosed(value: number): Channels;
 
 
     serializeBinary(): Uint8Array;
@@ -204,19 +205,19 @@ export namespace Channels {
 
 export class CloseChannelRequest extends jspb.Message { 
     getNodeIdentifier(): string;
-    setNodeIdentifier(value: string): void;
+    setNodeIdentifier(value: string): CloseChannelRequest;
 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): CloseChannelRequest;
 
     getForce(): boolean;
-    setForce(value: boolean): void;
+    setForce(value: boolean): CloseChannelRequest;
 
     getDestination(): string;
-    setDestination(value: string): void;
+    setDestination(value: string): CloseChannelRequest;
 
     getAmount(): number;
-    setAmount(value: number): void;
+    setAmount(value: number): CloseChannelRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -242,7 +243,7 @@ export namespace CloseChannelRequest {
 export class CloseChannelResponse extends jspb.Message { 
     clearTransactionIdsList(): void;
     getTransactionIdsList(): Array<string>;
-    setTransactionIdsList(value: Array<string>): void;
+    setTransactionIdsList(value: Array<string>): CloseChannelResponse;
     addTransactionIds(value: string, index?: number): string;
 
 
@@ -264,7 +265,7 @@ export namespace CloseChannelResponse {
 
 export class ConnectRequest extends jspb.Message { 
     getNodeUri(): string;
-    setNodeUri(value: string): void;
+    setNodeUri(value: string): ConnectRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -302,7 +303,7 @@ export namespace ConnectResponse {
 
 export class CreateNodeRequest extends jspb.Message { 
     getPassword(): string;
-    setPassword(value: string): void;
+    setPassword(value: string): CreateNodeRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -324,12 +325,12 @@ export namespace CreateNodeRequest {
 export class CreateNodeResponse extends jspb.Message { 
     clearSeedMnemonicList(): void;
     getSeedMnemonicList(): Array<string>;
-    setSeedMnemonicList(value: Array<string>): void;
+    setSeedMnemonicList(value: Array<string>): CreateNodeResponse;
     addSeedMnemonic(value: string, index?: number): string;
 
     clearInitializedLndsList(): void;
     getInitializedLndsList(): Array<string>;
-    setInitializedLndsList(value: Array<string>): void;
+    setInitializedLndsList(value: Array<string>): CreateNodeResponse;
     addInitializedLnds(value: string, index?: number): string;
 
 
@@ -352,16 +353,16 @@ export namespace CreateNodeResponse {
 
 export class Currency extends jspb.Message { 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): Currency;
 
     getSwapClient(): Currency.SwapClient;
-    setSwapClient(value: Currency.SwapClient): void;
+    setSwapClient(value: Currency.SwapClient): Currency;
 
     getTokenAddress(): string;
-    setTokenAddress(value: string): void;
+    setTokenAddress(value: string): Currency;
 
     getDecimalPlaces(): number;
-    setDecimalPlaces(value: number): void;
+    setDecimalPlaces(value: number): Currency;
 
 
     serializeBinary(): Uint8Array;
@@ -391,7 +392,7 @@ export namespace Currency {
 
 export class DepositRequest extends jspb.Message { 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): DepositRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -412,7 +413,7 @@ export namespace DepositRequest {
 
 export class DepositResponse extends jspb.Message { 
     getAddress(): string;
-    setAddress(value: string): void;
+    setAddress(value: string): DepositResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -433,7 +434,7 @@ export namespace DepositResponse {
 
 export class DiscoverNodesRequest extends jspb.Message { 
     getNodeIdentifier(): string;
-    setNodeIdentifier(value: string): void;
+    setNodeIdentifier(value: string): DiscoverNodesRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -454,7 +455,7 @@ export namespace DiscoverNodesRequest {
 
 export class DiscoverNodesResponse extends jspb.Message { 
     getNumNodes(): number;
-    setNumNodes(value: number): void;
+    setNumNodes(value: number): DiscoverNodesResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -475,16 +476,16 @@ export namespace DiscoverNodesResponse {
 
 export class ExecuteSwapRequest extends jspb.Message { 
     getOrderId(): string;
-    setOrderId(value: string): void;
+    setOrderId(value: string): ExecuteSwapRequest;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): ExecuteSwapRequest;
 
     getPeerPubKey(): string;
-    setPeerPubKey(value: string): void;
+    setPeerPubKey(value: string): ExecuteSwapRequest;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): ExecuteSwapRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -508,7 +509,7 @@ export namespace ExecuteSwapRequest {
 
 export class GetBalanceRequest extends jspb.Message { 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): GetBalanceRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -569,48 +570,48 @@ export namespace GetInfoRequest {
 
 export class GetInfoResponse extends jspb.Message { 
     getVersion(): string;
-    setVersion(value: string): void;
+    setVersion(value: string): GetInfoResponse;
 
     getNodePubKey(): string;
-    setNodePubKey(value: string): void;
+    setNodePubKey(value: string): GetInfoResponse;
 
     clearUrisList(): void;
     getUrisList(): Array<string>;
-    setUrisList(value: Array<string>): void;
+    setUrisList(value: Array<string>): GetInfoResponse;
     addUris(value: string, index?: number): string;
 
     getNumPeers(): number;
-    setNumPeers(value: number): void;
+    setNumPeers(value: number): GetInfoResponse;
 
     getNumPairs(): number;
-    setNumPairs(value: number): void;
+    setNumPairs(value: number): GetInfoResponse;
 
 
     hasOrders(): boolean;
     clearOrders(): void;
     getOrders(): OrdersCount | undefined;
-    setOrders(value?: OrdersCount): void;
+    setOrders(value?: OrdersCount): GetInfoResponse;
 
 
     getLndMap(): jspb.Map<string, LndInfo>;
     clearLndMap(): void;
 
     getAlias(): string;
-    setAlias(value: string): void;
+    setAlias(value: string): GetInfoResponse;
 
     getNetwork(): string;
-    setNetwork(value: string): void;
+    setNetwork(value: string): GetInfoResponse;
 
     clearPendingSwapHashesList(): void;
     getPendingSwapHashesList(): Array<string>;
-    setPendingSwapHashesList(value: Array<string>): void;
+    setPendingSwapHashesList(value: Array<string>): GetInfoResponse;
     addPendingSwapHashes(value: string, index?: number): string;
 
 
     hasConnext(): boolean;
     clearConnext(): void;
     getConnext(): ConnextInfo | undefined;
-    setConnext(value?: ConnextInfo): void;
+    setConnext(value?: ConnextInfo): GetInfoResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -642,7 +643,7 @@ export namespace GetInfoResponse {
 
 export class GetNodeInfoRequest extends jspb.Message { 
     getNodeIdentifier(): string;
-    setNodeIdentifier(value: string): void;
+    setNodeIdentifier(value: string): GetNodeInfoRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -663,10 +664,10 @@ export namespace GetNodeInfoRequest {
 
 export class GetNodeInfoResponse extends jspb.Message { 
     getReputationscore(): number;
-    setReputationscore(value: number): void;
+    setReputationscore(value: number): GetNodeInfoResponse;
 
     getBanned(): boolean;
-    setBanned(value: boolean): void;
+    setBanned(value: boolean): GetNodeInfoResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -706,7 +707,7 @@ export namespace ListCurrenciesRequest {
 export class ListCurrenciesResponse extends jspb.Message { 
     clearCurrenciesList(): void;
     getCurrenciesList(): Array<Currency>;
-    setCurrenciesList(value: Array<Currency>): void;
+    setCurrenciesList(value: Array<Currency>): ListCurrenciesResponse;
     addCurrencies(value?: Currency, index?: number): Currency;
 
 
@@ -728,16 +729,16 @@ export namespace ListCurrenciesResponse {
 
 export class ListOrdersRequest extends jspb.Message { 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): ListOrdersRequest;
 
     getOwner(): ListOrdersRequest.Owner;
-    setOwner(value: ListOrdersRequest.Owner): void;
+    setOwner(value: ListOrdersRequest.Owner): ListOrdersRequest;
 
     getLimit(): number;
-    setLimit(value: number): void;
+    setLimit(value: number): ListOrdersRequest;
 
     getIncludeAliases(): boolean;
-    setIncludeAliases(value: boolean): void;
+    setIncludeAliases(value: boolean): ListOrdersRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -809,7 +810,7 @@ export namespace ListPairsRequest {
 export class ListPairsResponse extends jspb.Message { 
     clearPairsList(): void;
     getPairsList(): Array<string>;
-    setPairsList(value: Array<string>): void;
+    setPairsList(value: Array<string>): ListPairsResponse;
     addPairs(value: string, index?: number): string;
 
 
@@ -849,7 +850,7 @@ export namespace ListPeersRequest {
 export class ListPeersResponse extends jspb.Message { 
     clearPeersList(): void;
     getPeersList(): Array<Peer>;
-    setPeersList(value: Array<Peer>): void;
+    setPeersList(value: Array<Peer>): ListPeersResponse;
     addPeers(value?: Peer, index?: number): Peer;
 
 
@@ -871,32 +872,32 @@ export namespace ListPeersResponse {
 
 export class LndInfo extends jspb.Message { 
     getStatus(): string;
-    setStatus(value: string): void;
+    setStatus(value: string): LndInfo;
 
 
     hasChannels(): boolean;
     clearChannels(): void;
     getChannels(): Channels | undefined;
-    setChannels(value?: Channels): void;
+    setChannels(value?: Channels): LndInfo;
 
     clearChainsList(): void;
     getChainsList(): Array<Chain>;
-    setChainsList(value: Array<Chain>): void;
+    setChainsList(value: Array<Chain>): LndInfo;
     addChains(value?: Chain, index?: number): Chain;
 
     getBlockheight(): number;
-    setBlockheight(value: number): void;
+    setBlockheight(value: number): LndInfo;
 
     clearUrisList(): void;
     getUrisList(): Array<string>;
-    setUrisList(value: Array<string>): void;
+    setUrisList(value: Array<string>): LndInfo;
     addUris(value: string, index?: number): string;
 
     getVersion(): string;
-    setVersion(value: string): void;
+    setVersion(value: string): LndInfo;
 
     getAlias(): string;
-    setAlias(value: string): void;
+    setAlias(value: string): LndInfo;
 
 
     serializeBinary(): Uint8Array;
@@ -923,10 +924,10 @@ export namespace LndInfo {
 
 export class NodeIdentifier extends jspb.Message { 
     getNodePubKey(): string;
-    setNodePubKey(value: string): void;
+    setNodePubKey(value: string): NodeIdentifier;
 
     getAlias(): string;
-    setAlias(value: string): void;
+    setAlias(value: string): NodeIdentifier;
 
 
     serializeBinary(): Uint8Array;
@@ -948,16 +949,16 @@ export namespace NodeIdentifier {
 
 export class OpenChannelRequest extends jspb.Message { 
     getNodeIdentifier(): string;
-    setNodeIdentifier(value: string): void;
+    setNodeIdentifier(value: string): OpenChannelRequest;
 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): OpenChannelRequest;
 
     getAmount(): number;
-    setAmount(value: number): void;
+    setAmount(value: number): OpenChannelRequest;
 
     getPushAmount(): number;
-    setPushAmount(value: number): void;
+    setPushAmount(value: number): OpenChannelRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -981,7 +982,7 @@ export namespace OpenChannelRequest {
 
 export class OpenChannelResponse extends jspb.Message { 
     getTransactionId(): string;
-    setTransactionId(value: string): void;
+    setTransactionId(value: string): OpenChannelResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -1002,37 +1003,37 @@ export namespace OpenChannelResponse {
 
 export class Order extends jspb.Message { 
     getPrice(): number;
-    setPrice(value: number): void;
+    setPrice(value: number): Order;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): Order;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): Order;
 
     getId(): string;
-    setId(value: string): void;
+    setId(value: string): Order;
 
 
     hasNodeIdentifier(): boolean;
     clearNodeIdentifier(): void;
     getNodeIdentifier(): NodeIdentifier | undefined;
-    setNodeIdentifier(value?: NodeIdentifier): void;
+    setNodeIdentifier(value?: NodeIdentifier): Order;
 
     getLocalId(): string;
-    setLocalId(value: string): void;
+    setLocalId(value: string): Order;
 
     getCreatedAt(): number;
-    setCreatedAt(value: number): void;
+    setCreatedAt(value: number): Order;
 
     getSide(): OrderSide;
-    setSide(value: OrderSide): void;
+    setSide(value: OrderSide): Order;
 
     getIsOwnOrder(): boolean;
-    setIsOwnOrder(value: boolean): void;
+    setIsOwnOrder(value: boolean): Order;
 
     getHold(): number;
-    setHold(value: number): void;
+    setHold(value: number): Order;
 
 
     serializeBinary(): Uint8Array;
@@ -1062,19 +1063,19 @@ export namespace Order {
 
 export class OrderRemoval extends jspb.Message { 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): OrderRemoval;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): OrderRemoval;
 
     getOrderId(): string;
-    setOrderId(value: string): void;
+    setOrderId(value: string): OrderRemoval;
 
     getLocalId(): string;
-    setLocalId(value: string): void;
+    setLocalId(value: string): OrderRemoval;
 
     getIsOwnOrder(): boolean;
-    setIsOwnOrder(value: boolean): void;
+    setIsOwnOrder(value: boolean): OrderRemoval;
 
 
     serializeBinary(): Uint8Array;
@@ -1100,12 +1101,12 @@ export namespace OrderRemoval {
 export class Orders extends jspb.Message { 
     clearBuyOrdersList(): void;
     getBuyOrdersList(): Array<Order>;
-    setBuyOrdersList(value: Array<Order>): void;
+    setBuyOrdersList(value: Array<Order>): Orders;
     addBuyOrders(value?: Order, index?: number): Order;
 
     clearSellOrdersList(): void;
     getSellOrdersList(): Array<Order>;
-    setSellOrdersList(value: Array<Order>): void;
+    setSellOrdersList(value: Array<Order>): Orders;
     addSellOrders(value?: Order, index?: number): Order;
 
 
@@ -1128,10 +1129,10 @@ export namespace Orders {
 
 export class OrdersCount extends jspb.Message { 
     getPeer(): number;
-    setPeer(value: number): void;
+    setPeer(value: number): OrdersCount;
 
     getOwn(): number;
-    setOwn(value: number): void;
+    setOwn(value: number): OrdersCount;
 
 
     serializeBinary(): Uint8Array;
@@ -1156,13 +1157,13 @@ export class OrderUpdate extends jspb.Message {
     hasOrder(): boolean;
     clearOrder(): void;
     getOrder(): Order | undefined;
-    setOrder(value?: Order): void;
+    setOrder(value?: Order): OrderUpdate;
 
 
     hasOrderRemoval(): boolean;
     clearOrderRemoval(): void;
     getOrderRemoval(): OrderRemoval | undefined;
-    setOrderRemoval(value?: OrderRemoval): void;
+    setOrderRemoval(value?: OrderRemoval): OrderUpdate;
 
 
     getOrderUpdateCase(): OrderUpdate.OrderUpdateCase;
@@ -1184,7 +1185,7 @@ export namespace OrderUpdate {
     }
 
     export enum OrderUpdateCase {
-        ORDERUPDATE_NOT_SET = 0,
+        ORDER_UPDATE_NOT_SET = 0,
     
     ORDER = 1,
 
@@ -1196,31 +1197,31 @@ export namespace OrderUpdate {
 
 export class Peer extends jspb.Message { 
     getAddress(): string;
-    setAddress(value: string): void;
+    setAddress(value: string): Peer;
 
     getNodePubKey(): string;
-    setNodePubKey(value: string): void;
+    setNodePubKey(value: string): Peer;
 
 
     getLndPubKeysMap(): jspb.Map<string, string>;
     clearLndPubKeysMap(): void;
 
     getInbound(): boolean;
-    setInbound(value: boolean): void;
+    setInbound(value: boolean): Peer;
 
     clearPairsList(): void;
     getPairsList(): Array<string>;
-    setPairsList(value: Array<string>): void;
+    setPairsList(value: Array<string>): Peer;
     addPairs(value: string, index?: number): string;
 
     getXudVersion(): string;
-    setXudVersion(value: string): void;
+    setXudVersion(value: string): Peer;
 
     getSecondsConnected(): number;
-    setSecondsConnected(value: number): void;
+    setSecondsConnected(value: number): Peer;
 
     getAlias(): string;
-    setAlias(value: string): void;
+    setAlias(value: string): Peer;
 
 
     serializeBinary(): Uint8Array;
@@ -1249,25 +1250,25 @@ export namespace Peer {
 
 export class PlaceOrderRequest extends jspb.Message { 
     getPrice(): number;
-    setPrice(value: number): void;
+    setPrice(value: number): PlaceOrderRequest;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): PlaceOrderRequest;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): PlaceOrderRequest;
 
     getOrderId(): string;
-    setOrderId(value: string): void;
+    setOrderId(value: string): PlaceOrderRequest;
 
     getSide(): OrderSide;
-    setSide(value: OrderSide): void;
+    setSide(value: OrderSide): PlaceOrderRequest;
 
     getReplaceOrderId(): string;
-    setReplaceOrderId(value: string): void;
+    setReplaceOrderId(value: string): PlaceOrderRequest;
 
     getImmediateOrCancel(): boolean;
-    setImmediateOrCancel(value: boolean): void;
+    setImmediateOrCancel(value: boolean): PlaceOrderRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1295,23 +1296,23 @@ export namespace PlaceOrderRequest {
 export class PlaceOrderResponse extends jspb.Message { 
     clearInternalMatchesList(): void;
     getInternalMatchesList(): Array<Order>;
-    setInternalMatchesList(value: Array<Order>): void;
+    setInternalMatchesList(value: Array<Order>): PlaceOrderResponse;
     addInternalMatches(value?: Order, index?: number): Order;
 
     clearSwapSuccessesList(): void;
     getSwapSuccessesList(): Array<SwapSuccess>;
-    setSwapSuccessesList(value: Array<SwapSuccess>): void;
+    setSwapSuccessesList(value: Array<SwapSuccess>): PlaceOrderResponse;
     addSwapSuccesses(value?: SwapSuccess, index?: number): SwapSuccess;
 
 
     hasRemainingOrder(): boolean;
     clearRemainingOrder(): void;
     getRemainingOrder(): Order | undefined;
-    setRemainingOrder(value?: Order): void;
+    setRemainingOrder(value?: Order): PlaceOrderResponse;
 
     clearSwapFailuresList(): void;
     getSwapFailuresList(): Array<SwapFailure>;
-    setSwapFailuresList(value: Array<SwapFailure>): void;
+    setSwapFailuresList(value: Array<SwapFailure>): PlaceOrderResponse;
     addSwapFailures(value?: SwapFailure, index?: number): SwapFailure;
 
 
@@ -1339,25 +1340,25 @@ export class PlaceOrderEvent extends jspb.Message {
     hasMatch(): boolean;
     clearMatch(): void;
     getMatch(): Order | undefined;
-    setMatch(value?: Order): void;
+    setMatch(value?: Order): PlaceOrderEvent;
 
 
     hasSwapSuccess(): boolean;
     clearSwapSuccess(): void;
     getSwapSuccess(): SwapSuccess | undefined;
-    setSwapSuccess(value?: SwapSuccess): void;
+    setSwapSuccess(value?: SwapSuccess): PlaceOrderEvent;
 
 
     hasRemainingOrder(): boolean;
     clearRemainingOrder(): void;
     getRemainingOrder(): Order | undefined;
-    setRemainingOrder(value?: Order): void;
+    setRemainingOrder(value?: Order): PlaceOrderEvent;
 
 
     hasSwapFailure(): boolean;
     clearSwapFailure(): void;
     getSwapFailure(): SwapFailure | undefined;
-    setSwapFailure(value?: SwapFailure): void;
+    setSwapFailure(value?: SwapFailure): PlaceOrderEvent;
 
 
     getEventCase(): PlaceOrderEvent.EventCase;
@@ -1397,16 +1398,16 @@ export namespace PlaceOrderEvent {
 
 export class ConnextInfo extends jspb.Message { 
     getStatus(): string;
-    setStatus(value: string): void;
+    setStatus(value: string): ConnextInfo;
 
     getAddress(): string;
-    setAddress(value: string): void;
+    setAddress(value: string): ConnextInfo;
 
     getVersion(): string;
-    setVersion(value: string): void;
+    setVersion(value: string): ConnextInfo;
 
     getChain(): string;
-    setChain(value: string): void;
+    setChain(value: string): ConnextInfo;
 
 
     serializeBinary(): Uint8Array;
@@ -1430,7 +1431,7 @@ export namespace ConnextInfo {
 
 export class RemoveCurrencyRequest extends jspb.Message { 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): RemoveCurrencyRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1468,10 +1469,10 @@ export namespace RemoveCurrencyResponse {
 
 export class RemoveOrderRequest extends jspb.Message { 
     getOrderId(): string;
-    setOrderId(value: string): void;
+    setOrderId(value: string): RemoveOrderRequest;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): RemoveOrderRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1493,7 +1494,7 @@ export namespace RemoveOrderRequest {
 
 export class RemoveOrderResponse extends jspb.Message { 
     getQuantityOnHold(): number;
-    setQuantityOnHold(value: number): void;
+    setQuantityOnHold(value: number): RemoveOrderResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -1514,7 +1515,7 @@ export namespace RemoveOrderResponse {
 
 export class RemovePairRequest extends jspb.Message { 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): RemovePairRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1553,11 +1554,11 @@ export namespace RemovePairResponse {
 export class RestoreNodeRequest extends jspb.Message { 
     clearSeedMnemonicList(): void;
     getSeedMnemonicList(): Array<string>;
-    setSeedMnemonicList(value: Array<string>): void;
+    setSeedMnemonicList(value: Array<string>): RestoreNodeRequest;
     addSeedMnemonic(value: string, index?: number): string;
 
     getPassword(): string;
-    setPassword(value: string): void;
+    setPassword(value: string): RestoreNodeRequest;
 
 
     getLndBackupsMap(): jspb.Map<string, Uint8Array | string>;
@@ -1566,7 +1567,7 @@ export class RestoreNodeRequest extends jspb.Message {
     getXudDatabase(): Uint8Array | string;
     getXudDatabase_asU8(): Uint8Array;
     getXudDatabase_asB64(): string;
-    setXudDatabase(value: Uint8Array | string): void;
+    setXudDatabase(value: Uint8Array | string): RestoreNodeRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1592,7 +1593,7 @@ export namespace RestoreNodeRequest {
 export class RestoreNodeResponse extends jspb.Message { 
     clearRestoredLndsList(): void;
     getRestoredLndsList(): Array<string>;
-    setRestoredLndsList(value: Array<string>): void;
+    setRestoredLndsList(value: Array<string>): RestoreNodeResponse;
     addRestoredLnds(value: string, index?: number): string;
 
 
@@ -1648,7 +1649,7 @@ export namespace ShutdownResponse {
 
 export class SubscribeOrdersRequest extends jspb.Message { 
     getExisting(): boolean;
-    setExisting(value: boolean): void;
+    setExisting(value: boolean): SubscribeOrdersRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1686,7 +1687,7 @@ export namespace SubscribeSwapsAcceptedRequest {
 
 export class SubscribeSwapsRequest extends jspb.Message { 
     getIncludeTaker(): boolean;
-    setIncludeTaker(value: boolean): void;
+    setIncludeTaker(value: boolean): SubscribeSwapsRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1707,37 +1708,37 @@ export namespace SubscribeSwapsRequest {
 
 export class SwapAccepted extends jspb.Message { 
     getOrderId(): string;
-    setOrderId(value: string): void;
+    setOrderId(value: string): SwapAccepted;
 
     getLocalId(): string;
-    setLocalId(value: string): void;
+    setLocalId(value: string): SwapAccepted;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): SwapAccepted;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): SwapAccepted;
 
     getPrice(): number;
-    setPrice(value: number): void;
+    setPrice(value: number): SwapAccepted;
 
     getPeerPubKey(): string;
-    setPeerPubKey(value: string): void;
+    setPeerPubKey(value: string): SwapAccepted;
 
     getRHash(): string;
-    setRHash(value: string): void;
+    setRHash(value: string): SwapAccepted;
 
     getAmountReceiving(): number;
-    setAmountReceiving(value: number): void;
+    setAmountReceiving(value: number): SwapAccepted;
 
     getAmountSending(): number;
-    setAmountSending(value: number): void;
+    setAmountSending(value: number): SwapAccepted;
 
     getCurrencyReceiving(): string;
-    setCurrencyReceiving(value: string): void;
+    setCurrencyReceiving(value: string): SwapAccepted;
 
     getCurrencySending(): string;
-    setCurrencySending(value: string): void;
+    setCurrencySending(value: string): SwapAccepted;
 
 
     serializeBinary(): Uint8Array;
@@ -1768,19 +1769,19 @@ export namespace SwapAccepted {
 
 export class SwapFailure extends jspb.Message { 
     getOrderId(): string;
-    setOrderId(value: string): void;
+    setOrderId(value: string): SwapFailure;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): SwapFailure;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): SwapFailure;
 
     getPeerPubKey(): string;
-    setPeerPubKey(value: string): void;
+    setPeerPubKey(value: string): SwapFailure;
 
     getFailureReason(): string;
-    setFailureReason(value: string): void;
+    setFailureReason(value: string): SwapFailure;
 
 
     serializeBinary(): Uint8Array;
@@ -1805,43 +1806,43 @@ export namespace SwapFailure {
 
 export class SwapSuccess extends jspb.Message { 
     getOrderId(): string;
-    setOrderId(value: string): void;
+    setOrderId(value: string): SwapSuccess;
 
     getLocalId(): string;
-    setLocalId(value: string): void;
+    setLocalId(value: string): SwapSuccess;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): SwapSuccess;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): SwapSuccess;
 
     getRHash(): string;
-    setRHash(value: string): void;
+    setRHash(value: string): SwapSuccess;
 
     getAmountReceived(): number;
-    setAmountReceived(value: number): void;
+    setAmountReceived(value: number): SwapSuccess;
 
     getAmountSent(): number;
-    setAmountSent(value: number): void;
+    setAmountSent(value: number): SwapSuccess;
 
     getPeerPubKey(): string;
-    setPeerPubKey(value: string): void;
+    setPeerPubKey(value: string): SwapSuccess;
 
     getRole(): Role;
-    setRole(value: Role): void;
+    setRole(value: Role): SwapSuccess;
 
     getCurrencyReceived(): string;
-    setCurrencyReceived(value: string): void;
+    setCurrencyReceived(value: string): SwapSuccess;
 
     getCurrencySent(): string;
-    setCurrencySent(value: string): void;
+    setCurrencySent(value: string): SwapSuccess;
 
     getRPreimage(): string;
-    setRPreimage(value: string): void;
+    setRPreimage(value: string): SwapSuccess;
 
     getPrice(): number;
-    setPrice(value: number): void;
+    setPrice(value: number): SwapSuccess;
 
 
     serializeBinary(): Uint8Array;
@@ -1877,40 +1878,40 @@ export class Trade extends jspb.Message {
     hasMakerOrder(): boolean;
     clearMakerOrder(): void;
     getMakerOrder(): Order | undefined;
-    setMakerOrder(value?: Order): void;
+    setMakerOrder(value?: Order): Trade;
 
 
     hasTakerOrder(): boolean;
     clearTakerOrder(): void;
     getTakerOrder(): Order | undefined;
-    setTakerOrder(value?: Order): void;
+    setTakerOrder(value?: Order): Trade;
 
     getRHash(): string;
-    setRHash(value: string): void;
+    setRHash(value: string): Trade;
 
     getQuantity(): number;
-    setQuantity(value: number): void;
+    setQuantity(value: number): Trade;
 
     getPairId(): string;
-    setPairId(value: string): void;
+    setPairId(value: string): Trade;
 
     getPrice(): number;
-    setPrice(value: number): void;
+    setPrice(value: number): Trade;
 
     getRole(): Role;
-    setRole(value: Role): void;
+    setRole(value: Role): Trade;
 
     getExecutedAt(): number;
-    setExecutedAt(value: number): void;
+    setExecutedAt(value: number): Trade;
 
     getSide(): OrderSide;
-    setSide(value: OrderSide): void;
+    setSide(value: OrderSide): Trade;
 
 
     hasCounterparty(): boolean;
     clearCounterparty(): void;
     getCounterparty(): NodeIdentifier | undefined;
-    setCounterparty(value?: NodeIdentifier): void;
+    setCounterparty(value?: NodeIdentifier): Trade;
 
 
     serializeBinary(): Uint8Array;
@@ -1940,7 +1941,7 @@ export namespace Trade {
 
 export class TradeHistoryRequest extends jspb.Message { 
     getLimit(): number;
-    setLimit(value: number): void;
+    setLimit(value: number): TradeHistoryRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -1962,7 +1963,7 @@ export namespace TradeHistoryRequest {
 export class TradeHistoryResponse extends jspb.Message { 
     clearTradesList(): void;
     getTradesList(): Array<Trade>;
-    setTradesList(value: Array<Trade>): void;
+    setTradesList(value: Array<Trade>): TradeHistoryResponse;
     addTrades(value?: Trade, index?: number): Trade;
 
 
@@ -1984,10 +1985,10 @@ export namespace TradeHistoryResponse {
 
 export class TradingLimits extends jspb.Message { 
     getMaxsell(): number;
-    setMaxsell(value: number): void;
+    setMaxsell(value: number): TradingLimits;
 
     getMaxbuy(): number;
-    setMaxbuy(value: number): void;
+    setMaxbuy(value: number): TradingLimits;
 
 
     serializeBinary(): Uint8Array;
@@ -2009,7 +2010,7 @@ export namespace TradingLimits {
 
 export class TradingLimitsRequest extends jspb.Message { 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): TradingLimitsRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -2053,10 +2054,10 @@ export namespace TradingLimitsResponse {
 
 export class UnbanRequest extends jspb.Message { 
     getNodeIdentifier(): string;
-    setNodeIdentifier(value: string): void;
+    setNodeIdentifier(value: string): UnbanRequest;
 
     getReconnect(): boolean;
-    setReconnect(value: boolean): void;
+    setReconnect(value: boolean): UnbanRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -2095,7 +2096,7 @@ export namespace UnbanResponse {
 
 export class UnlockNodeRequest extends jspb.Message { 
     getPassword(): string;
-    setPassword(value: string): void;
+    setPassword(value: string): UnlockNodeRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -2117,12 +2118,12 @@ export namespace UnlockNodeRequest {
 export class UnlockNodeResponse extends jspb.Message { 
     clearUnlockedLndsList(): void;
     getUnlockedLndsList(): Array<string>;
-    setUnlockedLndsList(value: Array<string>): void;
+    setUnlockedLndsList(value: Array<string>): UnlockNodeResponse;
     addUnlockedLnds(value: string, index?: number): string;
 
     clearLockedLndsList(): void;
     getLockedLndsList(): Array<string>;
-    setLockedLndsList(value: Array<string>): void;
+    setLockedLndsList(value: Array<string>): UnlockNodeResponse;
     addLockedLnds(value: string, index?: number): string;
 
 
@@ -2145,19 +2146,19 @@ export namespace UnlockNodeResponse {
 
 export class WithdrawRequest extends jspb.Message { 
     getCurrency(): string;
-    setCurrency(value: string): void;
+    setCurrency(value: string): WithdrawRequest;
 
     getDestination(): string;
-    setDestination(value: string): void;
+    setDestination(value: string): WithdrawRequest;
 
     getAmount(): number;
-    setAmount(value: number): void;
+    setAmount(value: number): WithdrawRequest;
 
     getAll(): boolean;
-    setAll(value: boolean): void;
+    setAll(value: boolean): WithdrawRequest;
 
     getFee(): number;
-    setFee(value: number): void;
+    setFee(value: number): WithdrawRequest;
 
 
     serializeBinary(): Uint8Array;
@@ -2182,7 +2183,7 @@ export namespace WithdrawRequest {
 
 export class WithdrawResponse extends jspb.Message { 
     getTransactionId(): string;
-    setTransactionId(value: string): void;
+    setTransactionId(value: string): WithdrawResponse;
 
 
     serializeBinary(): Uint8Array;

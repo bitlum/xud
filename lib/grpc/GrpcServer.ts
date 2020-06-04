@@ -1,27 +1,29 @@
+import { Server, ServerCredentials } from '@grpc/grpc-js';
 import assert from 'assert';
 import { promises as fs } from 'fs';
-import grpc from 'grpc';
 import { md, pki } from 'node-forge';
 import { hostname } from 'os';
 import Logger from '../Logger';
-import { XudInitService, XudService } from '../proto/xudrpc_grpc_pb';
+import * as xudGrpc from '../proto/xudrpc_grpc_pb';
 import errors from './errors';
 import GrpcInitService from './GrpcInitService';
 import GrpcService from './GrpcService';
-import serverProxy from './serverProxy';
+import { ServerProxy, serverProxy } from './serverProxy';
 
 class GrpcServer {
   public grpcService = new GrpcService();
   public grpcInitService = new GrpcInitService();
-  private server: any;
+  private server: ServerProxy;
 
   constructor(private logger: Logger) {
-    this.server = serverProxy(new grpc.Server());
+    this.server = serverProxy(new Server());
 
     this.grpcInitService = new GrpcInitService();
     this.grpcService = new GrpcService();
-    this.server.addService(XudInitService, this.grpcInitService);
-    this.server.addService(XudService, this.grpcService);
+    // @ts-ignore
+    this.server.addService(xudGrpc['xudrpc.XudInit'], this.grpcInitService);
+    // @ts-ignore
+    this.server.addService(xudGrpc['xudrpc.Xud'], this.grpcService);
 
     this.server.use(async (ctx: any, next: any) => {
       logger.trace(`received call ${ctx.service.path}`);
@@ -67,21 +69,23 @@ class GrpcServer {
     }
 
     // tslint:disable-next-line:no-null-keyword
-    const credentials = grpc.ServerCredentials.createSsl(null,
+    const credentials = ServerCredentials.createSsl(null,
       [{
         cert_chain: certificate,
         private_key: privateKey,
       }], false);
 
-    const bindCode = this.server.bind(`${host}:${port}`, credentials);
-    if (bindCode !== port) {
-      const error = errors.COULD_NOT_BIND(port.toString());
-      this.logger.error(error.message);
-      throw error;
-    }
-
-    this.server.start();
-    this.logger.info(`gRPC server listening on ${host}:${port}`);
+    return new Promise<void>((resolve, reject) => {
+      this.server.bindAsync(`${host}:${port}`, credentials, (err) => {
+        if (err) {
+          this.logger.error(err.message);
+          reject(errors.COULD_NOT_BIND(port.toString()));
+        }
+        this.server.start();
+        this.logger.info(`gRPC server listening on ${host}:${port}`);
+        resolve();
+      });
+    });
   }
 
   /**

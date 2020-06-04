@@ -5,4 +5,5 @@ module.exports = {
     '**/seedutil/*.[jt]s?(x)',
     '**/test/jest/**/*.[jt]s?(x)'
   ],
+  testPathIgnorePatterns: ['WebProxy.spec.ts'],
 };

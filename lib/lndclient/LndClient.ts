@@ -1,12 +1,13 @@
+import * as grpc from '@grpc/grpc-js';
+import { ServiceClient } from '@grpc/grpc-js/build/src/make-client';
 import assert from 'assert';
 import { promises as fs, watch } from 'fs';
-import grpc, { ChannelCredentials, ClientReadableStream } from 'grpc';
 import path from 'path';
 import { SwapClientType, SwapRole, SwapState } from '../constants/enums';
 import Logger from '../Logger';
-import { InvoicesClient } from '../proto/lndinvoices_grpc_pb';
+import * as lndinvoicesGrpc from '../proto/lndinvoices_grpc_pb';
 import * as lndinvoices from '../proto/lndinvoices_pb';
-import { LightningClient, WalletUnlockerClient } from '../proto/lndrpc_grpc_pb';
+import * as lndGrpc from '../proto/lndrpc_grpc_pb';
 import * as lndrpc from '../proto/lndrpc_pb';
 import swapErrors from '../swaps/errors';
 import SwapClient, { ChannelBalance, ClientStatus, PaymentState, SwapClientInfo, TradingLimits, WithdrawArguments } from '../swaps/SwapClient';
@@ -14,6 +15,13 @@ import { SwapDeal, CloseChannelParams, OpenChannelParams } from '../swaps/types'
 import { base64ToHex, hexToUint8Array } from '../utils/utils';
 import errors from './errors';
 import { Chain, ChannelCount, ClientMethods, LndClientConfig, LndInfo } from './types';
+
+// @ts-ignore
+const LightningClient = grpc.makeClientConstructor(lndGrpc['lnrpc.Lightning'], 'LightningService');
+// @ts-ignore
+const WalletUnlockerClient = grpc.makeClientConstructor(lndGrpc['lnrpc.WalletUnlocker'], 'WalletUnlockerService');
+// @ts-ignore
+const InvoicesClient = grpc.makeClientConstructor(lndinvoicesGrpc['invoicesrpc.Invoices'], 'InvoicesService');
 
 interface LndClient {
   on(event: 'connectionVerified', listener: (swapClientInfo: SwapClientInfo) => void): this;
@@ -41,24 +49,24 @@ class LndClient extends SwapClient {
   public readonly finalLock: number;
   public config: LndClientConfig;
   public currency: string;
-  private lightning?: LightningClient;
-  private walletUnlocker?: WalletUnlockerClient;
+  private lightning?: ServiceClient;
+  private walletUnlocker?: ServiceClient;
   /** The maximum time to wait for a client to be ready for making grpc calls, can be used for exponential backoff. */
   private maxClientWaitTime = BASE_MAX_CLIENT_WAIT_TIME;
-  private invoices?: InvoicesClient;
+  private invoices?: ServiceClient;
   /** The path to the lnd admin macaroon, will be undefined if `nomacaroons` is enabled */
   private macaroonpath?: string;
   private meta = new grpc.Metadata();
   private uri!: string;
-  private credentials!: ChannelCredentials;
+  private credentials!: grpc.ChannelCredentials;
   /** The identity pub key for this lnd instance. */
   private identityPubKey?: string;
   /** List of client's public listening uris that are advertised to the network */
   private urisList?: string[];
   /** The identifier for the chain this lnd instance is using in the format [chain]-[network] like "bitcoin-testnet" */
   private chainIdentifier?: string;
-  private channelBackupSubscription?: ClientReadableStream<lndrpc.ChanBackupSnapshot>;
-  private invoiceSubscriptions = new Map<string, ClientReadableStream<lndrpc.Invoice>>();
+  private channelBackupSubscription?: grpc.ClientReadableStream<lndrpc.ChanBackupSnapshot>;
+  private invoiceSubscriptions = new Map<string, grpc.ClientReadableStream<lndrpc.Invoice>>();
   private initRetryTimeout?: NodeJS.Timeout;
   private _totalOutboundAmount = 0;
   private _maxChannelOutboundAmount = 0;
@@ -240,7 +248,7 @@ class LndClient extends SwapClient {
     });
   }
 
-  private unaryCall = <T, U>(methodName: Exclude<keyof LightningClient, ClientMethods>, params: T): Promise<U> => {
+  private unaryCall = <T, U>(methodName: Exclude<keyof lndGrpc.LightningClient, ClientMethods>, params: T): Promise<U> => {
     return new Promise((resolve, reject) => {
       if (!this.isOperational()) {
         reject(errors.DISABLED);
@@ -274,7 +282,7 @@ class LndClient extends SwapClient {
     }
   }
 
-  private unaryInvoiceCall = <T, U>(methodName: Exclude<keyof InvoicesClient, ClientMethods>, params: T): Promise<U> => {
+  private unaryInvoiceCall = <T, U>(methodName: Exclude<keyof lndinvoicesGrpc.InvoicesClient, ClientMethods>, params: T): Promise<U> => {
     return new Promise((resolve, reject) => {
       if (!this.isOperational()) {
         reject(errors.DISABLED);
@@ -300,7 +308,7 @@ class LndClient extends SwapClient {
     });
   }
 
-  private unaryWalletUnlockerCall = <T, U>(methodName: Exclude<keyof WalletUnlockerClient, ClientMethods>, params: T): Promise<U> => {
+  private unaryWalletUnlockerCall = <T, U>(methodName: Exclude<keyof lndGrpc.WalletUnlockerClient, ClientMethods>, params: T): Promise<U> => {
     return new Promise((resolve, reject) => {
       if (!this.isOperational()) {
         reject(errors.DISABLED);

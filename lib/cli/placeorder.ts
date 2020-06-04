@@ -3,6 +3,7 @@ import { Order, OrderSide, PlaceOrderEvent, PlaceOrderRequest, PlaceOrderRespons
 import { callback, loadXudClient } from './command';
 import { coinsToSats, satsToCoinsStr } from './utils';
 import { checkDecimalPlaces } from '../utils/utils';
+import { XudClient } from 'lib/proto/xudrpc_grpc_pb';
 
 export const placeOrderBuilder = (argv: Argv, side: OrderSide) => {
   const command = side === OrderSide.BUY ? 'buy' : 'sell';
@@ -75,7 +76,7 @@ export const placeOrderHandler = async (argv: Arguments<any>, side: OrderSide) =
     request.setReplaceOrderId(argv.replace_order_id);
   }
 
-  const client = await loadXudClient(argv);
+  const client = await loadXudClient(argv) as unknown as XudClient;
   if (argv.sync) {
     client.placeOrderSync(request, callback(argv, formatPlaceOrderOutput));
   } else {

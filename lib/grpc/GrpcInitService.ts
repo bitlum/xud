@@ -1,10 +1,11 @@
 /* tslint:disable no-null-keyword */
-import grpc, { status } from 'grpc';
-import InitService from '../service/InitService';
+import * as grpc from '@grpc/grpc-js';
 import * as xudrpc from '../proto/xudrpc_pb';
+import InitService from '../service/InitService';
 import getGrpcError from './getGrpcError';
 
-class GrpcInitService {
+class GrpcInitService implements grpc.UntypedServiceImplementation {
+  [name: string]: any;
   private disabled = false;
   private initService?: InitService;
 
@@ -29,8 +30,8 @@ class GrpcInitService {
     : initService is InitService => {
     if (!initService) {
       const err = this.disabled ?
-        { code: status.UNIMPLEMENTED, message: 'xud init service is disabled', name: 'DisabledError' } :
-        { code: status.UNAVAILABLE, message: 'xud is starting', name: 'NotReadyError' };
+        { code: grpc.status.UNIMPLEMENTED, message: 'xud init service is disabled', name: 'DisabledError' } :
+        { code: grpc.status.UNAVAILABLE, message: 'xud is starting', name: 'NotReadyError' };
       callback(err, null);
       return false;
     }
@@ -45,7 +46,7 @@ class GrpcInitService {
       return;
     }
     try {
-      const { mnemonic, initializedLndWallets } = await this.initService.createNode(call.request.toObject());
+      const { mnemonic, initializedLndWallets } = await this.initService.createNode(call.request!.toObject());
       const response = new xudrpc.CreateNodeResponse();
       if (mnemonic) {
         response.setSeedMnemonicList(mnemonic);
@@ -66,7 +67,7 @@ class GrpcInitService {
       return;
     }
     try {
-      const unlockNodeResult = await this.initService.unlockNode(call.request.toObject());
+      const unlockNodeResult = await this.initService.unlockNode(call.request!.toObject());
       const response = new xudrpc.UnlockNodeResponse();
       response.setUnlockedLndsList(unlockNodeResult.unlockedLndClients);
       response.setLockedLndsList(unlockNodeResult.lockedLndClients);
@@ -85,10 +86,10 @@ class GrpcInitService {
       return;
     }
     try {
-      const password = call.request.getPassword();
-      const lndBackupsMap = call.request.getLndBackupsMap();
-      const seedMnemonicList = call.request.getSeedMnemonicList();
-      const xudDatabase = call.request.getXudDatabase_asU8();
+      const password = call.request!.getPassword();
+      const lndBackupsMap = call.request!.getLndBackupsMap();
+      const seedMnemonicList = call.request!.getSeedMnemonicList();
+      const xudDatabase = call.request!.getXudDatabase_asU8();
       const { restoredLndWallets } = await this.initService.restoreNode({
         password,
         seedMnemonicList,

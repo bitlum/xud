@@ -5,9 +5,8 @@ ENV NVM_DIR /usr/local/nvm
 WORKDIR $NVM_DIR
 RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
-    && nvm install --lts \
-    && nvm alias default lts/* \
-    && nvm use default
+    && nvm install node \
+    && nvm use node
 
 ENV WD=/app
 WORKDIR $WD

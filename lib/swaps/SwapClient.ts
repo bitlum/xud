@@ -77,8 +77,10 @@ export type WithdrawArguments = {
 interface SwapClient {
   on(event: 'connectionVerified', listener: (swapClientInfo: SwapClientInfo) => void): this;
   once(event: 'initialized', listener: () => void): this;
+  on(event: 'htlcAccepted', listener: (rHash: string, units: bigint, currency?: string) => void): this;
   emit(event: 'connectionVerified', swapClientInfo: SwapClientInfo): boolean;
   emit(event: 'initialized'): boolean;
+  emit(event: 'htlcAccepted', rHash: string, units: bigint, currency?: string): boolean;
 }
 
 /**
@@ -286,7 +288,7 @@ abstract class SwapClient extends EventEmitter {
    * @param destination the identifier for the receiving node
    * @returns routes
    */
-  public abstract async getRoute(units: number, destination: string, currency: string, finalCltvDelta?: number): Promise<Route | undefined>;
+  public abstract async getRoute(units: bigint, destination: string, currency: string, finalCltvDelta?: number): Promise<Route | undefined>;
 
   /**
    * Checks whether it is possible to route a payment to a node. This does not test or guarantee
@@ -304,7 +306,7 @@ abstract class SwapClient extends EventEmitter {
    */
   public abstract async addInvoice(
     { rHash, units, expiry, currency }:
-    { rHash: string, units: number, expiry?: number, currency?: string },
+    { rHash: string, units: bigint, expiry?: number, currency?: string },
   ): Promise<void>;
 
   public abstract async settleInvoice(rHash: string, rPreimage: string, currency?: string): Promise<void>;

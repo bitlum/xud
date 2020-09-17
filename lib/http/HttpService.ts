@@ -45,7 +45,7 @@ class HttpService {
       } = incomingTransferRequest.data.transferMeta;
       const rHash = lockHash.slice(2);
       const timelock = parseInt(timelockString, 10);
-      const units = parseInt(amountHex._hex, 16);
+      const units = BigInt(amountHex._hex);
       await this.service.transferReceived({
         rHash,
         timelock,

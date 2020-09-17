@@ -31,10 +31,10 @@ type LndUpdate = {
 interface SwapClientManager {
   on(event: 'lndUpdate', listener: (lndUpdate: LndUpdate) => void): this;
   on(event: 'connextUpdate', listener: (tokenAddresses: Map<string, string>, pubKey?: string) => void): this;
-  on(event: 'htlcAccepted', listener: (swapClient: SwapClient, rHash: string, amount: number, currency: string) => void): this;
+  on(event: 'htlcAccepted', listener: (swapClient: SwapClient, rHash: string, units: bigint, currency: string) => void): this;
   emit(event: 'lndUpdate', lndUpdate: LndUpdate): boolean;
   emit(event: 'connextUpdate', tokenAddresses: Map<string, string>, pubKey?: string): boolean;
-  emit(event: 'htlcAccepted', swapClient: SwapClient, rHash: string, amount: number, currency: string): boolean;
+  emit(event: 'htlcAccepted', swapClient: SwapClient, rHash: string, units: bigint, currency: string): boolean;
 }
 
 class SwapClientManager extends EventEmitter {

@@ -1,39 +1,46 @@
+import { Currency } from 'lib/orderbook/types';
+
 class UnitConverter {
-  /** Number of smallest units per currency. */
-  private UNITS_PER_CURRENCY: { [key: string]: number } = {
-    BTC: 1,
-    LTC: 1,
-    ETH: 10 ** 10,
-    USDT: 10 ** -2,
-    WETH: 10 ** 10,
-    DAI: 10 ** 10,
-    XUC: 10 ** 10,
-  };
-  public init = () => {
-    // TODO: Populate the mapping from the database (Currency.decimalPlaces).
-    // this.UNITS_PER_CURRENCY = await fetchUnitsPerCurrencyFromDatabase();
+  private decimalPlacesPerCurrency = new Map<string, number>();
+
+  constructor(currencies: Currency[]) {
+    currencies.forEach((currency) => {
+      this.decimalPlacesPerCurrency.set(currency.id, currency.decimalPlaces);
+    });
   }
 
   public amountToUnits = (
     { currency, amount }:
     { currency: string, amount: number },
-  ): number => {
-    const unitsPerCurrency = this.UNITS_PER_CURRENCY[currency];
-    if (!unitsPerCurrency) {
-      throw new Error(`cannot convert ${currency} amount of ${amount} to units because units per currency was not found in the database`);
+  ): bigint => {
+    const decimalPlaces = this.decimalPlacesPerCurrency.get(currency);
+    if (!decimalPlaces) {
+      throw new Error(`cannot convert ${currency} amount of ${amount} to units because decimal places per currency was not found in the database`);
     }
-    return Math.floor(amount * unitsPerCurrency);
+    if (decimalPlaces < 8) {
+      return BigInt(amount) / (10n ** (8n - BigInt(decimalPlaces)));
+    } else if (decimalPlaces > 8n) {
+      return BigInt(amount) * (10n ** BigInt(decimalPlaces) - 8n);
+    } else {
+      return BigInt(amount);
+    }
   }
 
   public unitsToAmount = (
     { currency, units }:
-    { currency: string, units: number },
+    { currency: string, units: bigint },
   ): number => {
-    const unitsPerCurrency = this.UNITS_PER_CURRENCY[currency];
-    if (!unitsPerCurrency) {
-      throw new Error(`cannot convert ${currency} units of ${units} to amount because units per currency was not found in the database`);
+    const decimalPlaces = this.decimalPlacesPerCurrency.get(currency);
+    if (!decimalPlaces) {
+      throw new Error(`cannot convert ${currency} units of ${units} to units because decimal places per currency was not found in the database`);
     }
-    return Math.floor(units / unitsPerCurrency);
+    if (decimalPlaces < 8) {
+      return Number(units) * (10 ** (8 - decimalPlaces));
+    } else if (decimalPlaces > 8n) {
+      return Number(units) / (10 ** (decimalPlaces - 8));
+    } else {
+      return Number(units);
+    }
   }
 }
 

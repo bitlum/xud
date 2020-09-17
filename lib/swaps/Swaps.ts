@@ -17,6 +17,7 @@ import SwapClientManager from './SwapClientManager';
 import SwapRecovery from './SwapRecovery';
 import SwapRepository from './SwapRepository';
 import { ResolveRequest, Route, SanitySwap, SwapAccepted, SwapDeal, SwapSuccess } from './types';
+import { UnitConverter } from 'lib/utils/UnitConverter';
 
 export type OrderToAccept = Pick<SwapDeal, 'quantity' | 'price' | 'localId' | 'isBuy'> & {
   quantity: number;
@@ -48,17 +49,8 @@ class Swaps extends EventEmitter {
   private timeouts = new Map<string, number>();
   private usedHashes = new Set<string>();
   private repository: SwapRepository;
-  /** Number of smallest units per currency. */
-  // TODO: Use UnitConverter class instead
-  private static readonly UNITS_PER_CURRENCY: { [key: string]: number } = {
-    BTC: 1,
-    LTC: 1,
-    ETH: 10 ** 10,
-    USDT: 10 ** -2,
-    WETH: 10 ** 10,
-    DAI: 10 ** 10,
-    XUC: 10 ** 10,
-  };
+  private unitConverter: UnitConverter;
+
   /** The maximum time in milliseconds we will wait for a swap to be accepted before failing it. */
   private static readonly SWAP_ACCEPT_TIMEOUT = 10000;
   /** The maximum time in milliseconds we will wait for a swap to be completed before failing it. */
@@ -82,11 +74,12 @@ class Swaps extends EventEmitter {
   /** The maximum time in milliseconds we will wait for a swap to be completed before failing it. */
   private static readonly SANITY_SWAP_COMPLETE_TIMEOUT = 10000;
 
-  constructor({ logger, models, pool, swapClientManager, strict = true }: {
+  constructor({ logger, models, pool, swapClientManager, unitConverter, strict = true }: {
     logger: Logger,
     models: Models,
     pool: Pool,
     swapClientManager: SwapClientManager,
+    unitConverter: UnitConverter,
     strict?: boolean,
   }) {
     super();
@@ -95,6 +88,7 @@ class Swaps extends EventEmitter {
     this.models = models;
     this.pool = pool;
     this.swapClientManager = swapClientManager;
+    this.unitConverter = unitConverter;
     this.strict = strict;
     this.swapRecovery = new SwapRecovery(swapClientManager, logger.createSubLogger('RECOVERY'));
     this.repository = new SwapRepository(this.models);
@@ -139,9 +133,9 @@ class Swaps extends EventEmitter {
    * @param isBuy Whether the maker order in the swap is a buy
    * @returns An object with the calculated maker and taker values.
    */
-  private static calculateMakerTakerAmounts = (quantity: number, price: number, isBuy: boolean, pairId: string) => {
+  private calculateMakerTakerAmounts = (quantity: number, price: number, isBuy: boolean, pairId: string) => {
     const { inboundCurrency, inboundAmount, inboundUnits, outboundCurrency, outboundAmount, outboundUnits } =
-      Swaps.calculateInboundOutboundAmounts(quantity, price, isBuy, pairId);
+      this.calculateInboundOutboundAmounts(quantity, price, isBuy, pairId);
     return {
       makerCurrency: inboundCurrency,
       makerAmount: inboundAmount,
@@ -160,14 +154,14 @@ class Swaps extends EventEmitter {
    * @returns An object with the calculated incoming and outgoing values. The quote currency
    * amount is returned as zero if the price is 0 or infinity, indicating a market order.
    */
-  public static calculateInboundOutboundAmounts = (quantity: number, price: number, isBuy: boolean, pairId: string) => {
+  public calculateInboundOutboundAmounts = (quantity: number, price: number, isBuy: boolean, pairId: string) => {
     const [baseCurrency, quoteCurrency] = pairId.split('/');
     const baseCurrencyAmount = quantity;
     const quoteCurrencyAmount = price > 0 && price < Number.POSITIVE_INFINITY ?
       Math.round(quantity * price) :
       0; // if price is zero or infinity, this is a market order and we can't know the quote currency amount
-    const baseCurrencyUnits = Math.floor(baseCurrencyAmount * Swaps.UNITS_PER_CURRENCY[baseCurrency]);
-    const quoteCurrencyUnits = Math.floor(quoteCurrencyAmount * Swaps.UNITS_PER_CURRENCY[quoteCurrency]);
+    const baseCurrencyUnits = this.unitConverter.amountToUnits({ currency: baseCurrency, amount: baseCurrencyAmount });
+    const quoteCurrencyUnits = this.unitConverter.amountToUnits({ currency: quoteCurrency, amount: quoteCurrencyAmount });
 
     const inboundCurrency = isBuy ? baseCurrency : quoteCurrency;
     const inboundAmount = isBuy ? baseCurrencyAmount : quoteCurrencyAmount;
@@ -213,7 +207,7 @@ class Swaps extends EventEmitter {
       this.sanitySwaps.set(rHash, sanitySwap);
       const swapClient = this.swapClientManager.get(currency)!;
       try {
-        await swapClient.addInvoice({ rHash, units: 1 });
+        await swapClient.addInvoice({ rHash, units: 1n });
       } catch (err) {
         this.logger.error('could not add invoice for sanity swap', err);
         return;
@@ -321,7 +315,7 @@ class Swaps extends EventEmitter {
       throw SwapFailureReason.SwapClientNotSetup;
     }
 
-    const { makerCurrency, makerUnits } = Swaps.calculateMakerTakerAmounts(taker.quantity, maker.price, maker.isBuy, maker.pairId);
+    const { makerCurrency, makerUnits } = this.calculateMakerTakerAmounts(taker.quantity, maker.price, maker.isBuy, maker.pairId);
 
     const swapClient = this.swapClientManager.get(makerCurrency)!;
 
@@ -407,7 +401,7 @@ class Swaps extends EventEmitter {
 
     try {
       await Promise.all([
-        swapClient.addInvoice({ rHash, units: 1 }),
+        swapClient.addInvoice({ rHash, units: 1n }),
         peer.sendPacket(sanitySwapInitPacket),
         peer.wait(sanitySwapInitPacket.header.id, PacketType.SanitySwapAck, Swaps.SANITY_SWAP_INIT_TIMEOUT),
       ]);
@@ -439,7 +433,7 @@ class Swaps extends EventEmitter {
 
     const quantity = Math.min(maker.quantity, taker.quantity);
     const { makerCurrency, makerAmount, makerUnits, takerCurrency, takerAmount, takerUnits } =
-      Swaps.calculateMakerTakerAmounts(quantity, maker.price, maker.isBuy, maker.pairId);
+      this.calculateMakerTakerAmounts(quantity, maker.price, maker.isBuy, maker.pairId);
     const clientType = this.swapClientManager.get(makerCurrency)!.type;
     const destination = peer.getIdentifier(clientType, makerCurrency)!;
 
@@ -513,7 +507,7 @@ class Swaps extends EventEmitter {
     const { quantity, price, isBuy } = orderToAccept;
 
     const { makerCurrency, makerAmount, makerUnits, takerCurrency, takerAmount, takerUnits } =
-      Swaps.calculateMakerTakerAmounts(quantity, price, isBuy, pairId);
+      this.calculateMakerTakerAmounts(quantity, price, isBuy, pairId);
 
     const makerSwapClient = this.swapClientManager.get(makerCurrency)!;
     if (!makerSwapClient) {
@@ -701,7 +695,7 @@ class Swaps extends EventEmitter {
     return true;
   }
 
-  private handleHtlcAccepted = async (swapClient: SwapClient, rHash: string, amount: number, currency: string) => {
+  private handleHtlcAccepted = async (swapClient: SwapClient, rHash: string, units: bigint, currency: string) => {
     let rPreimage: string;
 
     const deal = this.getDeal(rHash);
@@ -714,7 +708,7 @@ class Swaps extends EventEmitter {
     }
 
     try {
-      rPreimage = await this.resolveHash(rHash, amount, currency);
+      rPreimage = await this.resolveHash(rHash, units, currency);
     } catch (err) {
       this.logger.error(`could not resolve hash for deal ${rHash}`, err);
       return;
@@ -822,7 +816,7 @@ class Swaps extends EventEmitter {
         // TODO: penalize peer
         return;
       } else if (quantity < deal.proposedQuantity) {
-        const { makerAmount, takerAmount } = Swaps.calculateMakerTakerAmounts(quantity, deal.price, deal.isBuy, deal.pairId);
+        const { makerAmount, takerAmount } = this.calculateMakerTakerAmounts(quantity, deal.price, deal.isBuy, deal.pairId);
         deal.takerAmount = takerAmount;
         deal.makerAmount = makerAmount;
       }
@@ -892,16 +886,16 @@ class Swaps extends EventEmitter {
    * @returns `true` if the resolve request is valid, `false` otherwise
    */
   private validateResolveRequest = (deal: SwapDeal, resolveRequest: ResolveRequest) => {
-    const { amount, tokenAddress, expiration, chain_height } = resolveRequest;
+    const { units, tokenAddress, expiration, chain_height } = resolveRequest;
     const peer = this.pool.getPeer(deal.peerPubKey);
-    let expectedAmount: number;
+    let expectedUnits: bigint;
     let expectedTokenAddress: string | undefined;
     let expectedCurrency: string;
     let source: string;
     let destination: string;
     switch (deal.role) {
       case SwapRole.Maker:
-        expectedAmount = deal.makerUnits;
+        expectedUnits = deal.makerUnits;
         expectedCurrency = deal.makerCurrency;
         expectedTokenAddress = this.swapClientManager.connextClient?.tokenAddresses.get(deal.makerCurrency);
         source = 'Taker';
@@ -929,7 +923,7 @@ class Swaps extends EventEmitter {
         }
         break;
       case SwapRole.Taker:
-        expectedAmount = deal.takerUnits;
+        expectedUnits = deal.takerUnits;
         expectedCurrency = deal.takerCurrency;
         expectedTokenAddress = this.swapClientManager.connextClient?.tokenAddresses.get(deal.takerCurrency);
         source = 'Maker';
@@ -958,8 +952,8 @@ class Swaps extends EventEmitter {
       return false;
     }
 
-    if (amount < expectedAmount) {
-      this.logger.error(`received ${amount}, expected ${expectedAmount}`);
+    if (units < expectedUnits) {
+      this.logger.error(`received ${units}, expected ${expectedUnits}`);
       this.failDeal({
         deal,
         peer,
@@ -974,9 +968,7 @@ class Swaps extends EventEmitter {
   }
 
   /** Attempts to resolve the preimage for the payment hash of a pending sanity swap. */
-  private resolveSanitySwap = async (rHash: string, amount: number, htlcCurrency?: string) => {
-    assert(amount === 1, 'sanity swaps must have an amount of exactly 1 of the smallest unit supported by the currency');
-
+  private resolveSanitySwap = async (rHash: string, htlcCurrency?: string) => {
     const sanitySwap = this.sanitySwaps.get(rHash);
 
     if (sanitySwap) {
@@ -1015,17 +1007,17 @@ class Swaps extends EventEmitter {
   /**
    * Resolves the hash for an incoming HTLC to its preimage.
    * @param rHash the payment hash to resolve
-   * @param amount the amount in satoshis
+   * @param units the amount in base units of the currency
    * @param htlcCurrency the currency of the HTLC
    * @returns the preimage for the provided payment hash
    */
-  public resolveHash = async (rHash: string, amount: number, htlcCurrency?: string): Promise<string> => {
+  public resolveHash = async (rHash: string, units: bigint, htlcCurrency?: string): Promise<string> => {
     const deal = this.getDeal(rHash);
 
     if (!deal) {
-      if (amount === 1) {
-        // if we don't have a deal for this hash, but its amount is exactly 1 satoshi, try to resolve it as a sanity swap
-        return this.resolveSanitySwap(rHash, amount, htlcCurrency);
+      if (units === 1n) {
+        // if we don't have a deal for this hash, but the amount is exactly 1 unit, try to resolve it as a sanity swap
+        return this.resolveSanitySwap(rHash, htlcCurrency);
       } else {
         throw errors.PAYMENT_HASH_NOT_FOUND(rHash);
       }
@@ -1142,7 +1134,7 @@ class Swaps extends EventEmitter {
   }
 
   public handleResolveRequest = async (resolveRequest: ResolveRequest): Promise<string> => {
-    const { amount, rHash } = resolveRequest;
+    const { units, rHash } = resolveRequest;
 
     this.logger.debug(`handleResolveRequest starting with hash ${rHash}`);
 
@@ -1163,7 +1155,7 @@ class Swaps extends EventEmitter {
     }
 
     try {
-      const preimage = await this.resolveHash(rHash, amount);
+      const preimage = await this.resolveHash(rHash, units);
 
       // we treat responding to a resolve request as having received payment and persist the state
       await this.setDealPhase(deal, SwapPhase.PaymentReceived);

@@ -782,7 +782,6 @@ class Service {
    */
   public resolveHash = async (request: ResolveRequest) => {
     argChecks.HAS_RHASH(request);
-    argChecks.POSITIVE_AMOUNT(request);
     return this.swaps.handleResolveRequest(request);
   }
 

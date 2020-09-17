@@ -46,11 +46,11 @@ const MAX_AMOUNT = Number.MAX_SAFE_INTEGER;
 interface ConnextClient {
   on(event: 'preimage', listener: (preimageRequest: ProvidePreimageEvent) => void): void;
   on(event: 'transferReceived', listener: (transferReceivedRequest: TransferReceivedEvent) => void): void;
-  on(event: 'htlcAccepted', listener: (rHash: string, amount: number, currency: string) => void): this;
+  on(event: 'htlcAccepted', listener: (rHash: string, units: bigint, currency: string) => void): this;
   on(event: 'connectionVerified', listener: (swapClientInfo: SwapClientInfo) => void): this;
   on(event: 'depositConfirmed', listener: (hash: string) => void): this;
   once(event: 'initialized', listener: () => void): this;
-  emit(event: 'htlcAccepted', rHash: string, amount: number, currency: string): boolean;
+  emit(event: 'htlcAccepted', rHash: string, units: bigint, currency: string): boolean;
   emit(event: 'connectionVerified', swapClientInfo: SwapClientInfo): boolean;
   emit(event: 'initialized'): boolean;
   emit(event: 'preimage', preimageRequest: ProvidePreimageEvent): void;
@@ -398,7 +398,7 @@ class ConnextClient extends SwapClient {
 
   public addInvoice = async (
     { rHash: expectedHash, units: expectedUnits, expiry: expectedTimelock, currency: expectedCurrency }:
-    { rHash: string, units: number, expiry?: number, currency?: string },
+    { rHash: string, units: bigint, expiry?: number, currency?: string },
   ) => {
     if (!expectedCurrency) {
       throw errors.CURRENCY_MISSING;
@@ -590,7 +590,7 @@ class ConnextClient extends SwapClient {
 
     const freeBalanceAmount = this.unitConverter.unitsToAmount({
       currency,
-      units: Number(freeBalanceOffChain),
+      units: BigInt(freeBalanceOffChain),
     });
 
     this._totalOutboundAmount.set(currency, freeBalanceAmount);
@@ -627,7 +627,7 @@ class ConnextClient extends SwapClient {
 
     const confirmedBalanceAmount = this.unitConverter.unitsToAmount({
       currency,
-      units: Number(freeBalanceOnChain),
+      units: BigInt(freeBalanceOnChain),
     });
 
     return {

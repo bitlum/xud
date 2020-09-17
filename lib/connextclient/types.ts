@@ -112,7 +112,7 @@ export type ConnextTransferStatus = {
 
 export type ExpectedIncomingTransfer = {
   rHash: string;
-  units: number;
+  units: bigint;
   expiry: number;
   tokenAddress: string;
   paymentId?: string;
@@ -186,7 +186,7 @@ export type TransferReceivedEvent = {
   tokenAddress: string;
   rHash: string;
   timelock: number;
-  units: number;
+  units: bigint;
   paymentId: string;
 };
 

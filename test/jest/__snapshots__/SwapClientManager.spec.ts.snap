@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Swaps.SwapClientManager openChannel it fails without peerSwapClientPubKey 1`] = `[TypeError: Cannot read property 'amountToUnits' of undefined]`;
+
 exports[`Swaps.SwapClientManager openChannel it fails without swap client 1`] = `
 Object {
   "code": "7.1",

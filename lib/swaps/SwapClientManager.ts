@@ -283,6 +283,7 @@ class SwapClientManager extends EventEmitter {
     const unlockWalletPromises: Promise<any>[] = [];
     const unlockedLndClients: string[] = [];
     const lockedLndClients: string[] = [];
+    let connextReady = false;
 
     for (const swapClient of this.swapClients.values()) {
       if (isLndClient(swapClient)) {
@@ -294,18 +295,24 @@ class SwapClientManager extends EventEmitter {
             swapClient.logger.debug(`could not unlock wallet: ${err.message}`);
           });
           unlockWalletPromises.push(unlockWalletPromise);
+        } else if (swapClient.isConnected()) {
+          // if the swap client is already unlocked, we add it to the list
+          unlockedLndClients.push(swapClient.currency);
         } else if (swapClient.isDisconnected() || swapClient.isMisconfigured() || swapClient.isNotInitialized()) {
           // if the swap client is not connected, we treat it as locked since lnd will likely be locked when it comes online
           lockedLndClients.push(swapClient.currency);
+        }
+      } else if (isConnextClient(swapClient)) {
+        // TODO(connext): unlock Connext using connextSeed
+        if (swapClient.isConnected()) {
+          connextReady = true;
         }
       }
     }
 
     await Promise.all(unlockWalletPromises);
 
-    // TODO(connext): unlock Connext using connextSeed
-
-    return { unlockedLndClients, lockedLndClients };
+    return { unlockedLndClients, lockedLndClients, connextReady };
   }
 
   /**

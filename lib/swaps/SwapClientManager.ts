@@ -133,9 +133,8 @@ class SwapClientManager extends EventEmitter {
    * Throws an error if any lnd clients remain unreachable.
    */
   public waitForLnd = async () => {
-    const lndClients = this.getLndClientsMap().values();
     const lndAvailablePromises: Promise<void>[] = [];
-    for (const lndClient of lndClients) {
+    for (const lndClient of this.lndClients.values()) {
       lndAvailablePromises.push(new Promise<void>((resolve, reject) => {
         if (lndClient.isDisconnected() || lndClient.isNotInitialized()) {
           const onAvailable = () => {
@@ -285,28 +284,28 @@ class SwapClientManager extends EventEmitter {
     const lockedLndClients: string[] = [];
     let connextReady = false;
 
-    for (const swapClient of this.swapClients.values()) {
-      if (isLndClient(swapClient)) {
-        if (swapClient.isWaitingUnlock()) {
-          const unlockWalletPromise = swapClient.unlockWallet(walletPassword).then(() => {
-            unlockedLndClients.push(swapClient.currency);
-          }).catch((err) => {
-            lockedLndClients.push(swapClient.currency);
-            swapClient.logger.debug(`could not unlock wallet: ${err.message}`);
-          });
-          unlockWalletPromises.push(unlockWalletPromise);
-        } else if (swapClient.isConnected()) {
-          // if the swap client is already unlocked, we add it to the list
-          unlockedLndClients.push(swapClient.currency);
-        } else if (swapClient.isDisconnected() || swapClient.isMisconfigured() || swapClient.isNotInitialized()) {
-          // if the swap client is not connected, we treat it as locked since lnd will likely be locked when it comes online
-          lockedLndClients.push(swapClient.currency);
-        }
-      } else if (isConnextClient(swapClient)) {
-        // TODO(connext): unlock Connext using connextSeed
-        if (swapClient.isConnected()) {
-          connextReady = true;
-        }
+    for (const lndClient of this.lndClients.values()) {
+      if (lndClient.isWaitingUnlock()) {
+        const unlockWalletPromise = lndClient.unlockWallet(walletPassword).then(() => {
+          unlockedLndClients.push(lndClient.currency);
+        }).catch((err) => {
+          lockedLndClients.push(lndClient.currency);
+          lndClient.logger.debug(`could not unlock wallet: ${err.message}`);
+        });
+        unlockWalletPromises.push(unlockWalletPromise);
+      } else if (lndClient.isConnected()) {
+        // if the swap client is already unlocked, we add it to the list
+        unlockedLndClients.push(lndClient.currency);
+      } else if (lndClient.isDisconnected() || lndClient.isMisconfigured() || lndClient.isNotInitialized()) {
+        // if the swap client is not connected, we treat it as locked since lnd will likely be locked when it comes online
+        lockedLndClients.push(lndClient.currency);
+      }
+    }
+
+    if (this.connextClient) {
+      // TODO(connext): unlock Connext using connextSeed
+      if (this.connextClient.isConnected()) {
+        connextReady = true;
       }
     }
 
@@ -386,7 +385,7 @@ class SwapClientManager extends EventEmitter {
    * Gets a map of all lnd clients.
    * @returns A map of currencies to lnd clients.
    */
-  public getLndClientsMap = () => {
+  public get lndClients() {
     const lndClients: Map<string, LndClient> = new Map();
     this.swapClients.forEach((swapClient, currency) => {
       if (isLndClient(swapClient)) {

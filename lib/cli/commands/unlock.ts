@@ -9,7 +9,7 @@ export const describe = 'unlock local xud node';
 
 export const builder = {};
 
-const formatOutput = (response: UnlockNodeResponse.AsObject) => {
+export const formatOutput = (response: UnlockNodeResponse.AsObject) => {
   console.log('xud was unlocked successfully');
   const readyClients = response.unlockedLndsList;
   if (response.connextReady) {

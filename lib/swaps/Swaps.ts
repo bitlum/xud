@@ -180,7 +180,7 @@ class Swaps extends EventEmitter {
 
   public init = async () => {
     // update pool with lnd pubkeys
-    this.swapClientManager.getLndClientsMap().forEach(({ pubKey, chain, currency, uris }) => {
+    this.swapClientManager.lndClients.forEach(({ pubKey, chain, currency, uris }) => {
       if (pubKey && chain) {
         this.pool.updateLndState({
           currency,

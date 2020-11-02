@@ -333,7 +333,6 @@ describe('Swaps.SwapClientManager', () => {
 
   describe('unlockWallets', () => {
 
-
     test('returns successful unlocks for BTC and LTC', async () => {
       const btcClient = new mockedLndClient();
       btcClient.currency = 'BTC';

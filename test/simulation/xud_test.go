@@ -3,15 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/ExchangeUnion/xud-simulation/connexttest"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/stretchr/testify/require"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/ExchangeUnion/xud-simulation/connexttest"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ExchangeUnion/xud-simulation/lntest"
 	"github.com/ExchangeUnion/xud-simulation/xudrpc"
@@ -63,6 +64,9 @@ func TestIntegration(t *testing.T) {
 	aliceBobBtcChanPoint, err := openBtcChannel(ctx, xudNetwork.LndBtcNetwork, xudNetwork.Alice.LndBtcNode, xudNetwork.Bob.LndBtcNode, amt, pushAmt)
 	assert.NoError(err)
 	aliceBobLtcChanPoint, err := openLtcChannel(ctx, xudNetwork.LndLtcNetwork, xudNetwork.Alice.LndLtcNode, xudNetwork.Bob.LndLtcNode, amt, pushAmt)
+	assert.NoError(err)
+	// open a second LTC channel between alice and bob for multipath payments
+	aliceBobLtcChanPoint, err = openLtcChannel(ctx, xudNetwork.LndLtcNetwork, xudNetwork.Alice.LndLtcNode, xudNetwork.Bob.LndLtcNode, amt, pushAmt)
 	assert.NoError(err)
 
 	bobCarolBtcChanPoint, err := openBtcChannel(ctx, xudNetwork.LndBtcNetwork, xudNetwork.Bob.LndBtcNode, xudNetwork.Carol.LndBtcNode, amt, pushAmt)

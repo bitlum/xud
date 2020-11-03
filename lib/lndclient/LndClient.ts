@@ -687,6 +687,7 @@ class LndClient extends SwapClient {
       // duration/length of the payment.
       request.setCltvLimit(cltvLimit);
     }
+    request.setMaxParts(5);
     return request;
   }
 

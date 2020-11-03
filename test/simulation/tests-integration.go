@@ -20,6 +20,10 @@ var integrationTestCases = []*testCase{
 		test: testOrderMatchingAndSwap,
 	},
 	{
+		name: "order matching and multi path swap",
+		test: testOrderMatchingAndMultiPathSwap,
+	},
+	{
 		name: "order matching and swap connext",
 		test: testOrderMatchingAndSwapConnext,
 	},
@@ -246,6 +250,35 @@ func testOrderMatchingAndSwap(net *xudtest.NetworkHarness, ht *harnessTest) {
 		OrderId:  "maker_order_id",
 		Price:    0.02,
 		Quantity: 1000000,
+		PairId:   "LTC/BTC",
+		Side:     xudrpc.OrderSide_BUY,
+	}
+	ht.act.placeOrderAndBroadcast(net.Alice, net.Bob, req)
+
+	// Place a matching order on Bob.
+	req = &xudrpc.PlaceOrderRequest{
+		OrderId:  "taker_order_id",
+		Price:    req.Price,
+		Quantity: req.Quantity,
+		PairId:   req.PairId,
+		Side:     xudrpc.OrderSide_SELL,
+	}
+	ht.act.placeOrderAndSwap(net.Bob, net.Alice, req)
+
+	// Cleanup.
+	ht.act.disconnect(net.Alice, net.Bob)
+}
+
+func testOrderMatchingAndMultiPathSwap(net *xudtest.NetworkHarness, ht *harnessTest) {
+	// Connect Alice to Bob.
+	ht.act.connect(net.Alice, net.Bob)
+	ht.act.verifyConnectivity(net.Alice, net.Bob)
+
+	// Place an order on Alice.
+	req := &xudrpc.PlaceOrderRequest{
+		OrderId:  "maker_order_id",
+		Price:    0.02,
+		Quantity: 8600000,
 		PairId:   "LTC/BTC",
 		Side:     xudrpc.OrderSide_BUY,
 	}

@@ -77,6 +77,7 @@ class LndClient extends SwapClient {
     BTC: 10,
     LTC: 2.5,
   };
+  private static MAX_PARTS = 5;
 
   /**
    * Creates an lnd client.
@@ -687,7 +688,7 @@ class LndClient extends SwapClient {
       // duration/length of the payment.
       request.setCltvLimit(cltvLimit);
     }
-    request.setMaxParts(5);
+    request.setMaxParts(LndClient.MAX_PARTS);
     return request;
   }
 
@@ -905,8 +906,20 @@ class LndClient extends SwapClient {
   }
 
   public getRoute = async (units: number, destination: string, _currency: string, finalLock = this.finalLock) => {
+    if (this.totalOutboundAmount < units) {
+      // if we don't have enough balance for this payment, we don't even try to find a route
+      throw swapErrors.INSUFFICIENT_BALANCE;
+    }
+
     const request = new lndrpc.QueryRoutesRequest();
-    request.setAmt(units);
+    // lnd does not currently support a way to find route(s) using multi path payments
+    // since we attempt to use up to multi path payments, we only check if there's any route
+    // that can support at least one part of the payment, as well as a check above to ensure
+    // we have sufficient balance across all channels to make the payment. This is opposed
+    // to attempting to replicate lnd's multi path payment route finding logic here, which
+    // would be complex and potentially slow/expensive or even impossible given that we don't
+    // have access to the lnd internal database and graph.
+    request.setAmt(units / LndClient.MAX_PARTS);
     request.setFinalCltvDelta(finalLock);
     request.setPubKey(destination);
     const fee = new lndrpc.FeeLimit();

@@ -39,6 +39,16 @@ interface LndClient {
   emit(event: 'initialized'): boolean;
 }
 
+type ChannelCapacities = {
+  maxOutbound: number;
+  maxInbound: number;
+  totalOutboundAmount: number;
+  totalInboundAmount: number;
+  balance: number;
+  inactiveBalance: number;
+  pendingOpenBalance: number;
+};
+
 /** A class representing a client to interact with lnd. */
 class LndClient extends SwapClient {
   public readonly type = SwapClientType.Lnd;
@@ -69,6 +79,7 @@ class LndClient extends SwapClient {
   private totalInboundAmount = 0;
   private maxChannelOutboundAmount = 0;
   private maxChannelInboundAmount = 0;
+  private refreshChannelCapacitiesPromise?: Promise<ChannelCapacities>;
 
   private initWalletResolve?: (value: boolean) => void;
   private watchMacaroonResolve?: (value: boolean) => void;
@@ -234,8 +245,8 @@ class LndClient extends SwapClient {
   }
 
   protected updateCapacity = async () => {
-    await this.channelBalance().catch(async (err) => {
-      this.logger.error('failed to update total outbound capacity', err);
+    await this.swapCapacities().catch(async (err) => {
+      this.logger.error('failed to update swap amount capacities', err);
     });
   }
 
@@ -733,78 +744,96 @@ class LndClient extends SwapClient {
   }
 
   /**
-   * Updates all balances related to channels including active, inactive, and pending balances.
-   * Sets trading limits for this client accordingly.
+   * Updates and returns all capacities & balances related to channels including
+   * active, inactive, and pending balances. Sets trading limits for this client accordingly.
    */
-  private updateChannelBalances = async () => {
-    const [channels, pendingChannels] = await Promise.all([this.listChannels(), this.pendingChannels()]);
+  private refreshChannelCapacities = async (): Promise<ChannelCapacities> => {
+    // if we already have a pending refresh capacities call, then we reuse that one
+    // rather than have multiple or duplicate requests to lnd for channel balance
+    // info in parallel
+    if (this.refreshChannelCapacitiesPromise) {
+      return this.refreshChannelCapacitiesPromise;
+    }
+    this.updateCapacityTimer?.refresh();
 
-    let maxOutbound = 0;
-    let maxInbound = 0;
-    let balance = 0;
-    let inactiveBalance = 0;
-    let totalOutboundAmount = 0;
-    let totalInboundAmount = 0;
-    channels.toObject().channelsList.forEach((channel) => {
-      if (channel.active) {
-        balance += channel.localBalance;
-        const outbound = channel.localBalance - channel.localChanReserveSat;
-        totalOutboundAmount += outbound;
-        if (maxOutbound < outbound) {
-          maxOutbound = outbound;
+    this.refreshChannelCapacitiesPromise = new Promise<ChannelCapacities>(async (resolve, reject) => {
+      try {
+        const [channels, pendingChannels] = await Promise.all([this.listChannels(), this.pendingChannels()]);
+
+        let maxOutbound = 0;
+        let maxInbound = 0;
+        let balance = 0;
+        let inactiveBalance = 0;
+        let totalOutboundAmount = 0;
+        let totalInboundAmount = 0;
+        channels.toObject().channelsList.forEach((channel) => {
+          if (channel.active) {
+            balance += channel.localBalance;
+            const outbound = channel.localBalance - channel.localChanReserveSat;
+            totalOutboundAmount += outbound;
+            if (maxOutbound < outbound) {
+              maxOutbound = outbound;
+            }
+
+            const inbound = channel.remoteBalance - channel.remoteChanReserveSat;
+            totalInboundAmount += inbound;
+            if (maxInbound < inbound) {
+              maxInbound = inbound;
+            }
+          } else {
+            inactiveBalance += channel.localBalance;
+          }
+        });
+
+        if (this.maxChannelOutboundAmount !== maxOutbound) {
+          this.maxChannelOutboundAmount = maxOutbound;
+          this.logger.debug(`new channel maximum outbound capacity: ${maxOutbound}`);
         }
 
-        const inbound = channel.remoteBalance - channel.remoteChanReserveSat;
-        totalInboundAmount += inbound;
-        if (maxInbound < inbound) {
-          maxInbound = inbound;
+        if (this.maxChannelInboundAmount !== maxInbound) {
+          this.maxChannelInboundAmount = maxInbound;
+          this.logger.debug(`new channel inbound capacity: ${maxInbound}`);
         }
-      } else {
-        inactiveBalance += channel.localBalance;
+
+        if (this.totalOutboundAmount !== totalOutboundAmount) {
+          this.totalOutboundAmount = totalOutboundAmount;
+          this.logger.debug(`new channel total outbound capacity: ${totalOutboundAmount}`);
+        }
+
+        if (this.totalInboundAmount !== totalInboundAmount) {
+          this.totalInboundAmount = totalInboundAmount;
+          this.logger.debug(`new channel total inbound capacity: ${totalInboundAmount}`);
+        }
+
+        const pendingOpenBalance = pendingChannels.toObject().pendingOpenChannelsList.
+        reduce((sum, pendingChannel) => sum + (pendingChannel.channel?.localBalance ?? 0), 0);
+
+        resolve({
+          maxOutbound,
+          maxInbound,
+          totalOutboundAmount,
+          totalInboundAmount,
+          balance,
+          inactiveBalance,
+          pendingOpenBalance,
+        });
+      } catch (err) {
+        reject(err);
+      } finally {
+        this.refreshChannelCapacitiesPromise = undefined;
       }
     });
 
-    if (this.maxChannelOutboundAmount !== maxOutbound) {
-      this.maxChannelOutboundAmount = maxOutbound;
-      this.logger.debug(`new channel maximum outbound capacity: ${maxOutbound}`);
-    }
-
-    if (this.maxChannelInboundAmount !== maxInbound) {
-      this.maxChannelInboundAmount = maxInbound;
-      this.logger.debug(`new channel inbound capacity: ${maxInbound}`);
-    }
-
-    if (this.totalOutboundAmount !== totalOutboundAmount) {
-      this.totalOutboundAmount = totalOutboundAmount;
-      this.logger.debug(`new channel total outbound capacity: ${totalOutboundAmount}`);
-    }
-
-    if (this.totalInboundAmount !== totalInboundAmount) {
-      this.totalInboundAmount = totalInboundAmount;
-      this.logger.debug(`new channel total inbound capacity: ${totalInboundAmount}`);
-    }
-
-    const pendingOpenBalance = pendingChannels.toObject().pendingOpenChannelsList.
-      reduce((sum, pendingChannel) => sum + (pendingChannel.channel?.localBalance ?? 0), 0);
-
-    return {
-      maxOutbound,
-      maxInbound,
-      totalOutboundAmount,
-      totalInboundAmount,
-      balance,
-      inactiveBalance,
-      pendingOpenBalance,
-    };
+    return this.refreshChannelCapacitiesPromise;
   }
 
   public channelBalance = async (): Promise<ChannelBalance> => {
-    const { balance, inactiveBalance, pendingOpenBalance } = await this.updateChannelBalances();
+    const { balance, inactiveBalance, pendingOpenBalance } = await this.refreshChannelCapacities();
     return { balance, inactiveBalance, pendingOpenBalance };
   }
 
   public swapCapacities = async (): Promise<SwapCapacities> => {
-    const { maxOutbound, maxInbound, totalInboundAmount, totalOutboundAmount } = await this.updateChannelBalances(); // get fresh balances
+    const { maxOutbound, maxInbound, totalInboundAmount, totalOutboundAmount } = await this.refreshChannelCapacities(); // get fresh balances
     return {
       maxOutboundChannelCapacity: maxOutbound,
       maxInboundChannelCapacity: maxInbound,
@@ -906,6 +935,7 @@ class LndClient extends SwapClient {
   }
 
   public getRoute = async (units: number, destination: string, _currency: string, finalLock = this.finalLock) => {
+    await this.refreshChannelCapacities();
     if (this.totalOutboundAmount < units) {
       // if we don't have enough balance for this payment, we don't even try to find a route
       throw swapErrors.INSUFFICIENT_BALANCE;

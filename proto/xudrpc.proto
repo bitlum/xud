@@ -279,6 +279,13 @@ service Xud {
     };
   }
 
+  /* Subscribes to alerts such as low balance. */
+  rpc SubscribeAlerts(SubscribeAlertsRequest) returns (stream Alert) {
+    option (google.api.http) = {
+      get: "/v1/subscribealerts"
+    };
+  }
+
   /* Subscribes to failed swaps. By default, only swaps that are initiated by a remote peer are
    * transmitted unless a flag is set to include swaps initiated by the local node. This call allows
    * the client to get real-time notifications when swap attempts are failing. It can be used for
@@ -375,6 +382,16 @@ message AddPairRequest {
   string quote_currency = 2 [json_name = "quote_currency"];
 }
 message AddPairResponse {}
+
+message Alert {
+   // The type of the alert.
+   enum AlertType {
+     NO_BALANCE = 0;
+   }
+   AlertType type = 1 [json_name = "type"];
+   // The message of the alert.
+   string message = 2 [json_name = "message"];
+}
 
 message Balance {
   // Total balance denominated in satoshis.
@@ -816,6 +833,9 @@ message ShutdownResponse {}
 message SubscribeOrdersRequest {
   // Whether to transmit all existing active orders upon establishing the stream.
   bool existing = 1 [json_name = "existing"];
+}
+
+message SubscribeAlertsRequest {
 }
 
 message SubscribeSwapsAcceptedRequest { }

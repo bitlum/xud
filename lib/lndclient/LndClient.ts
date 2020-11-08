@@ -23,6 +23,7 @@ interface LndClient {
   on(event: 'channelBackup', listener: (channelBackup: Uint8Array) => void): this;
   on(event: 'channelBackupEnd', listener: () => void): this;
   on(event: 'locked', listener: () => void): this;
+  on(event: 'noBalance', listener: (currency: string) => void): this;
 
   once(event: 'initialized', listener: () => void): this;
 
@@ -32,6 +33,7 @@ interface LndClient {
   emit(event: 'channelBackupEnd'): boolean;
   emit(event: 'locked'): boolean;
   emit(event: 'initialized'): boolean;
+  emit(event: 'noBalance', currency: string): boolean;
 }
 
 const MAXFEE = 0.03;
@@ -233,6 +235,10 @@ class LndClient extends SwapClient {
     await this.channelBalance().catch(async (err) => {
       this.logger.error('failed to update total outbound capacity', err);
     });
+
+    if (this.maxChannelOutboundAmount === 0) {
+      this.emit('noBalance', this.currency);
+    }
   }
 
   private unaryCall = <T, U>(methodName: Exclude<keyof LightningClient, ClientMethods>, params: T): Promise<U> => {

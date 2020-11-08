@@ -65,6 +65,36 @@ export namespace AddPairResponse {
     }
 }
 
+export class Alert extends jspb.Message { 
+    getType(): Alert.AlertType;
+    setType(value: Alert.AlertType): void;
+
+    getMessage(): string;
+    setMessage(value: string): void;
+
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Alert.AsObject;
+    static toObject(includeInstance: boolean, msg: Alert): Alert.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Alert, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Alert;
+    static deserializeBinaryFromReader(message: Alert, reader: jspb.BinaryReader): Alert;
+}
+
+export namespace Alert {
+    export type AsObject = {
+        type: Alert.AlertType,
+        message: string,
+    }
+
+    export enum AlertType {
+    NO_BALANCE = 0,
+    }
+
+}
+
 export class Balance extends jspb.Message { 
     getTotalBalance(): number;
     setTotalBalance(value: number): void;
@@ -1764,6 +1794,23 @@ export class SubscribeOrdersRequest extends jspb.Message {
 export namespace SubscribeOrdersRequest {
     export type AsObject = {
         existing: boolean,
+    }
+}
+
+export class SubscribeAlertsRequest extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SubscribeAlertsRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: SubscribeAlertsRequest): SubscribeAlertsRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SubscribeAlertsRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SubscribeAlertsRequest;
+    static deserializeBinaryFromReader(message: SubscribeAlertsRequest, reader: jspb.BinaryReader): SubscribeAlertsRequest;
+}
+
+export namespace SubscribeAlertsRequest {
+    export type AsObject = {
     }
 }
 

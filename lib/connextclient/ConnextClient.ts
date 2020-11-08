@@ -46,6 +46,7 @@ interface ConnextClient {
   on(event: 'htlcAccepted', listener: (rHash: string, amount: number, currency: string) => void): this;
   on(event: 'connectionVerified', listener: (swapClientInfo: SwapClientInfo) => void): this;
   on(event: 'depositConfirmed', listener: (hash: string) => void): this;
+  on(event: 'noBalance', listener: (currency: string) => void): this;
   once(event: 'initialized', listener: () => void): this;
   emit(event: 'htlcAccepted', rHash: string, amount: number, currency: string): boolean;
   emit(event: 'connectionVerified', swapClientInfo: SwapClientInfo): boolean;
@@ -53,6 +54,7 @@ interface ConnextClient {
   emit(event: 'preimage', preimageRequest: ProvidePreimageEvent): void;
   emit(event: 'transferReceived', transferReceivedRequest: TransferReceivedEvent): void;
   emit(event: 'depositConfirmed', hash: string): void;
+  emit(event: 'noBalance', currency: string): boolean;
 }
 
 /**
@@ -332,6 +334,12 @@ class ConnextClient extends SwapClient {
         channelBalancePromises.push(this.channelBalance(currency));
       }
       await Promise.all(channelBalancePromises);
+
+      this.outboundAmounts.forEach((amount, currency) => {
+        if (amount === 0) {
+          this.emit('noBalance', currency);
+        }
+      });
     } catch (e) {
       this.logger.error('failed to update total outbound capacity', e);
     }

@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ProvidePreimageEvent, TransferReceivedEvent } from '../connextclient/types';
-import { OrderSide, Owner, SwapClientType, SwapRole } from '../constants/enums';
+import { AlertType, OrderSide, Owner, SwapClientType, SwapRole } from '../constants/enums';
 import { OrderAttributes, TradeInstance } from '../db/types';
 import Logger, { Level, LevelPriority } from '../Logger';
 import OrderBook from '../orderbook/OrderBook';
@@ -692,6 +692,26 @@ class Service extends EventEmitter {
     argChecks.HAS_NODE_IDENTIFIER(args);
     const nodePubKey = isNodePubKey(args.nodeIdentifier) ? args.nodeIdentifier : this.pool.resolveAlias(args.nodeIdentifier);
     return this.pool.discoverNodes(nodePubKey);
+  }
+  /*
+   * Subscribe to alerts.
+   */
+  public subscribeAlerts = (
+      callback: (type: AlertType, message: string) => void,
+      cancelled$: Observable<void>,
+  ) => {
+    const noBalanceObservables: Observable<string>[] = [];
+    this.swapClientManager.swapClients.forEach((swapClient) => {
+      noBalanceObservables.push(fromEvent<string>(swapClient, 'noBalance'));
+    });
+
+    const noBalance$ = merge(...noBalanceObservables).pipe(takeUntil(cancelled$)); // cleanup listeners when cancelled$ emits a value
+    noBalance$.subscribe({
+      next: (currency) => {
+        callback(AlertType.NoBalance, `Channel balance is zero for ${currency}`);
+      },
+      error: this.logger.error,
+    });
   }
 
   /*

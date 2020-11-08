@@ -602,6 +602,23 @@
         ]
       }
     },
+    "/v1/subscribealerts": {
+      "get": {
+        "summary": "Subscribes to alerts such as low balance.",
+        "operationId": "SubscribeAlerts",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "$ref": "#/x-stream-definitions/xudrpcAlert"
+            }
+          }
+        },
+        "tags": [
+          "Xud"
+        ]
+      }
+    },
     "/v1/subscribeorders": {
       "get": {
         "summary": "Subscribes to orders being added to and removed from the order book. This call allows the client\nto maintain an up-to-date view of the order book. For example, an exchange that wants to show\nits users a real time view of the orders available to them would subscribe to this streaming\ncall to be alerted as new orders are added and expired orders are removed.",
@@ -836,6 +853,14 @@
     }
   },
   "definitions": {
+    "AlertAlertType": {
+      "type": "string",
+      "enum": [
+        "NO_BALANCE"
+      ],
+      "default": "NO_BALANCE",
+      "description": "The type of the alert."
+    },
     "CurrencySwapClient": {
       "type": "string",
       "enum": [
@@ -908,6 +933,18 @@
     },
     "xudrpcAddPairResponse": {
       "type": "object"
+    },
+    "xudrpcAlert": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/AlertAlertType"
+        },
+        "message": {
+          "type": "string",
+          "description": "The message of the alert."
+        }
+      }
     },
     "xudrpcBalance": {
       "type": "object",
@@ -2038,6 +2075,18 @@
     }
   },
   "x-stream-definitions": {
+    "xudrpcAlert": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/xudrpcAlert"
+        },
+        "error": {
+          "$ref": "#/definitions/runtimeStreamError"
+        }
+      },
+      "title": "Stream result of xudrpcAlert"
+    },
     "xudrpcOrderUpdate": {
       "type": "object",
       "properties": {

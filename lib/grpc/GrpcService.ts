@@ -871,6 +871,24 @@ class GrpcService {
   }
 
   /*
+   * See [[Service.subscribeAlerts]]
+   */
+  public subscribeAlerts: grpc.handleServerStreamingCall<xudrpc.SubscribeAlertsRequest, xudrpc.Alert> = (call) => {
+    if (!this.isReady(this.service, call)) {
+      return;
+    }
+
+    const cancelled$ = getCancelled$(call);
+    this.service.subscribeAlerts((type, message) => {
+      const alert = new xudrpc.Alert();
+      alert.setType(type as number);
+      alert.setMessage(message);
+      call.write(alert);
+    },
+    cancelled$);
+  }
+
+  /*
    * See [[Service.subscribeOrders]]
    */
   public subscribeOrders: grpc.handleServerStreamingCall<xudrpc.SubscribeOrdersRequest, xudrpc.OrderUpdate> = (call) => {

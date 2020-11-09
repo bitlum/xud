@@ -585,7 +585,7 @@ class LndClient extends SwapClient {
       // client's default.
       finalCltvDelta: this.finalLock,
     });
-    const preimage = await this.executeSendRequest(request);
+    const preimage = await this.sendPaymentV2(request);
     return preimage;
   }
 
@@ -618,7 +618,8 @@ class LndClient extends SwapClient {
         cltvLimit: deal.takerMaxTimeLock! + 3,
       });
     }
-    const preimage = await this.executeSendRequest(request);
+    this.logger.debug(`sending payment of ${request.getAmt()} with hash ${deal.rHash}`);
+    const preimage = await this.sendPaymentV2(request);
     return preimage;
   }
 
@@ -629,9 +630,14 @@ class LndClient extends SwapClient {
   private sendPaymentV2 = (request: lndrouter.SendPaymentRequest): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
       if (!this.router) {
-        reject(errors.UNAVAILABLE(this.currency, this.status));
+        reject(swapErrors.FINAL_PAYMENT_ERROR(errors.UNAVAILABLE(this.currency, this.status).message));
         return;
       }
+      if (!this.isConnected()) {
+        reject(swapErrors.FINAL_PAYMENT_ERROR(errors.UNAVAILABLE(this.currency, this.status).message));
+        return;
+      }
+
       this.logger.trace(`sending payment with request: ${JSON.stringify(request.toObject())}`);
 
       const call = this.router.sendPaymentV2(request, this.meta);
@@ -701,26 +707,6 @@ class LndClient extends SwapClient {
     }
     request.setMaxParts(LndClient.MAX_PARTS);
     return request;
-  }
-
-  /**
-   * Executes the provided lndrpc.SendRequest
-   */
-  private executeSendRequest = async (
-    request: lndrouter.SendPaymentRequest,
-  ): Promise<string> => {
-    if (!this.isConnected()) {
-      throw swapErrors.FINAL_PAYMENT_ERROR(errors.UNAVAILABLE(this.currency, this.status).message);
-    }
-
-    const paymentHashHex = request.getPaymentHash_asU8();
-    this.logger.debug(`sending payment of ${request.getAmt()} with hash ${paymentHashHex}`);
-
-    const preimage = await this.sendPaymentV2(request);
-    // base64ToHex(sendPaymentResponse.getPaymentPreimage_asB64());
-
-    this.logger.debug(`sent payment with hash ${paymentHashHex}, preimage is ${preimage}`);
-    return preimage;
   }
 
   /**

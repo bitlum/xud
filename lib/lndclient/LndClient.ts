@@ -949,7 +949,8 @@ class LndClient extends SwapClient {
     // to attempting to replicate lnd's multi path payment route finding logic here, which
     // would be complex and potentially slow/expensive or even impossible given that we don't
     // have access to the lnd internal database and graph.
-    request.setAmt(units / LndClient.MAX_PARTS);
+    const minPartSize = units / LndClient.MAX_PARTS;
+    request.setAmt(minPartSize);
     request.setFinalCltvDelta(finalLock);
     request.setPubKey(destination);
     const fee = new lndrpc.FeeLimit();
@@ -970,15 +971,15 @@ class LndClient extends SwapClient {
         !err.message.includes('unable to find a path to destination') &&
         !err.message.includes('target not found')
       )) {
-        this.logger.error(`error calling queryRoutes to ${destination}, amount ${units}, finalCltvDelta ${finalLock}`, err);
+        this.logger.error(`error calling queryRoutes to ${destination}, amount ${minPartSize}, finalCltvDelta ${finalLock}`, err);
         throw err;
       }
     }
 
     if (route) {
-      this.logger.debug(`found a route to ${destination} for ${units} units with finalCltvDelta ${finalLock}: ${route}`);
+      this.logger.debug(`found a route to ${destination} for ${minPartSize} units with finalCltvDelta ${finalLock}: ${route}`);
     } else {
-      this.logger.debug(`could not find a route to ${destination} for ${units} units with finalCltvDelta ${finalLock}`);
+      this.logger.debug(`could not find a route to ${destination} for ${minPartSize} units with finalCltvDelta ${finalLock}`);
     }
     return route;
   }

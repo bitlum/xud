@@ -645,6 +645,8 @@ class LndClient extends SwapClient {
       call.on('data', (response: lndrpc.Payment) => {
         switch (response.getStatus()) {
           case lndrpc.Payment.PaymentStatus.FAILED:
+            this.logger.error(`sendPaymentV2 failed with failure reason: ${lndrpc.PaymentFailureReason[response.getFailureReason()]}`);
+
             switch (response.getFailureReason()) {
               case lndrpc.PaymentFailureReason.FAILURE_REASON_TIMEOUT:
               case lndrpc.PaymentFailureReason.FAILURE_REASON_NO_ROUTE:
